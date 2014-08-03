@@ -7,10 +7,14 @@ The content is only available within Australia from an Australian IP address.
 
 Installation
 ------------
-The plugin is in beta and not yet available within the repository, instead
-download [GitHub generated ZIP file] [githubzip] to your XBMC device and 
-install it through the menu 
-via System -> Settings -> Add-ons -> Install from zip file.
+This latest release of this add-on is available as part of the 
+[XBMC CatchUp TV AU repository] [repository].
+
+For the latest development version, 
+you can grab the [GitHub generated ZIP file] [githubzip].
+
+Simply download the ZIP file to your XBMC device and install through the menu
+via System -> Settings -> Add-ons -> Install from zip file
 
 Issues
 ------
