@@ -26,6 +26,7 @@ Please include log output if possible, using [Github Gist] [gist] or
 The location of your XBMC log file will depend on your platform, 
 see the [XBMC Wiki page] [xbmc-wiki-log-file] for information.
 
+[repository]: http://code.google.com/p/xbmc-catchuptv-au
 [githubzip]: https://github.com/xbmc-catchuptv-au/plugin.video.catchuptv.au.nine/archive/master.zip
 [issues]: https://github.com/xbmc-catchuptv-au/plugin.video.catchuptv.au.nine/issues
 [gist]: https://gist.github.com
