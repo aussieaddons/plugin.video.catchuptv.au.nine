@@ -68,7 +68,7 @@ def get_api_token(type = 'ninemsnCatchup'):
 
 @plugin.route('/')
 def index():
-  data = load_json(TV_CAT_API_URL + '/shows?take=200')
+  data = load_json(TV_CAT_API_URL + '/shows?take=-1')
   shows = filter(filter_has_episodes, filter(filter_drm_shows, data['payload']))
   items = map(show_data_to_xbmc_dict, shows)
   plugin.set_content('tvshows')
