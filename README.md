@@ -14,7 +14,7 @@ For the latest development version,
 you can grab the [GitHub generated ZIP file] [githubzip].
 
 Simply download the ZIP file to your XBMC device and install through the menu
-via System -> Settings -> Add-ons -> Install from zip file
+via [System -> Settings -> Add-ons -> Install from zip file] [installfromzip]. You may have to install [certain dependencies] [dependencies] manually if you have not installed it from the repo previously.
 
 Issues
 ------
@@ -28,7 +28,9 @@ see the [XBMC Wiki page] [xbmc-wiki-log-file] for information.
 
 [repository]: https://github.com/xbmc-catchuptv-au/repo
 [githubzip]: https://github.com/xbmc-catchuptv-au/plugin.video.catchuptv.au.nine/archive/master.zip
+[installfromzip]: http://kodi.wiki/view/Add-on_manager#How_to_install_from_a_ZIP_file
+[dependencies]: https://github.com/xbmc-catchuptv-au/plugin.video.catchuptv.au.nine/blob/master/addon.xml#L4-7
 [issues]: https://github.com/xbmc-catchuptv-au/plugin.video.catchuptv.au.nine/issues
 [gist]: https://gist.github.com
 [pastebin]: http://pastebin.com/
-[xbmc-wiki-log-file]: http://wiki.xbmc.org/index.php?title=Log_file/Advanced#Log_files
+[xbmc-wiki-log-file]: http://kodi.wiki/view/Log_file/Advanced#Log_files
