@@ -4,7 +4,7 @@ from urllib import urlopen, quote
 import json
 
 
-TV_CAT_API_URL = 'http://tv-api-cat.api.jump-in.com.au'
+TV_CAT_API_URL = 'https://tv-api.9now.com.au/v2/pages/tv-series'
 
 plugin = Plugin()
 
