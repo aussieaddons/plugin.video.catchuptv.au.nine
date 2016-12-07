@@ -2,8 +2,6 @@
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.simplejson"/>
-    #  <import addon="script.module.beautifulsoup"/>
-    #  <import addon="script.module.catchuptv.brightcove"/>
     <import addon="script.module.xbmcswift2" version="2.4.0"/>
   </requires>
   <extension library="default.py" point="xbmc.python.pluginsource">
