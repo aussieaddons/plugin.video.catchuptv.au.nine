@@ -3,7 +3,7 @@ from xbmcswift2 import Plugin, SortMethod
 from urllib import urlopen, quote
 import json
 
-addon = xbmcaddon.Addon('plugin.video.catchuptv.au.nine')
+
 TV_CAT_API_URL = 'http://tv-api-cat.api.jump-in.com.au'
 
 plugin = Plugin()
