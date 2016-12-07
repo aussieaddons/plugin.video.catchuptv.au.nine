@@ -18,11 +18,11 @@ def load_json(url):
 # def filter_has_episodes(show):
   # return show['episodeCount'] > 0
 
-def map_tv_channel(channel):
-  if channel == 'Channel 9':
-    return 'Nine Network'
-  else:
-    return channel
+# def map_tv_channel(channel):
+  # if channel == 'Channel 9':
+    # return 'Nine Network'
+  # else:
+    # return channel
 
 def show_data_to_xbmc_dict(show):
   return {
@@ -33,7 +33,7 @@ def show_data_to_xbmc_dict(show):
       'plot': show['description'],
       'plotoutline': show['description'],
       'tvshowtitle': show['name'],
-      'studio': map_tv_channel(show['tvChannel']),
+      # 'studio': map_tv_channel(show['tvChannel']),
       # 'genre': show['genre']
     },
     'properties': {
