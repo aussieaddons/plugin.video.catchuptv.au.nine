@@ -1,3 +1,6 @@
+[B]Version 0.0.4[/B]
+-Changed website for scraping and changed default.py to reflect changes
+
 [B]Version 0.0.3[/B]
 - Move repo url from googlecode to github
 - Fix failure to show all available shows
