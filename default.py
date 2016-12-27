@@ -6,18 +6,17 @@ TV_API_BASE = 'https://tv-api.9now.com.au/v2/'
 BRIGHTCOVE_API_BASE = 'https://edge.api.brightcove.com/'
 BRIGHTCOVE_ACCOUNT_ID = '4460760524001'
 BRIGHTCOVE_PLATFORM_KEY = 'BCpkADawqM3lGJpOQdDMZC6_R_ZDm6VxNew-gdLyufvOnkWKzRlAbnX4g3Qu6zzi-esryjIYTrB1km-4qQpfqWel0KiuNtzG_q-vtTHGlu70L7SyEHTkLGNCzSUW6_dZNuE5L92GsjU7W-Uo'
+
 plugin = Plugin()
 
 def load_api(endpoint):
-  try:
-    r = requests.get(TV_API_BASE + endpoint, params={'device': 'xbmc'})
-    r.raise_for_status()
-    return r.json()
-  except SSLError:
-    d = xbmcgui.Dialog()
-
-    self.id = plugin.addon.getAddonInfo('id')
-    self.version = plugin.addon.getAddonInfo('version')
+  from requests.packages.urllib3.util.ssl_ import HAS_SNI
+  verify = HAS_SNI
+  if not verify:
+    plugin.log.warning("!!! DISABLING SSL VERIFICATION AS YOUR VERSION OF XBMC DOES NOT SUPPORT SNI !!!")
+  r = requests.get(TV_API_BASE + endpoint, params={'device': 'xbmc'}, verify=verify)
+  r.raise_for_status()
+  return r.json()
 
 def load_brightcove_data(referenceId):
   headers = { 'Accept': 'application/json;pk=' + BRIGHTCOVE_PLATFORM_KEY }
