@@ -1,112 +1,186 @@
-from brightcove.api import Brightcove
-from xbmcswift2 import Plugin, SortMethod
-from urllib import urlopen, quote
-import json
+from xbmcswift2 import ListItem, Plugin, SortMethod, xbmcplugin
+from ssl import SSLError
+import requests
 
-JUMPIN_WIDGET_CONFIG_URL = 'http://jumpin-widgets.static9.net.au/globalconfig/iphone'
-TV_CAT_API_URL = 'http://tv-api-cat.api.jump-in.com.au'
-
+TV_API_BASE = 'https://tv-api.9now.com.au/v2/'
+BRIGHTCOVE_API_BASE = 'https://edge.api.brightcove.com/'
+BRIGHTCOVE_ACCOUNT_ID = '4460760524001'
+BRIGHTCOVE_PLATFORM_KEY = 'BCpkADawqM3lGJpOQdDMZC6_R_ZDm6VxNew-gdLyufvOnkWKzRlAbnX4g3Qu6zzi-esryjIYTrB1km-4qQpfqWel0KiuNtzG_q-vtTHGlu70L7SyEHTkLGNCzSUW6_dZNuE5L92GsjU7W-Uo'
 plugin = Plugin()
 
-def load_json(url):
-  fp = urlopen(url)
-  return json.load(fp)
+def load_api(endpoint):
+  try:
+    r = requests.get(TV_API_BASE + endpoint, params={'device': 'xbmc'})
+    r.raise_for_status()
+    return r.json()
+  except SSLError:
+    d = xbmcgui.Dialog()
 
-def filter_drm_shows(show):
-  return not show['drm']
+    self.id = plugin.addon.getAddonInfo('id')
+    self.version = plugin.addon.getAddonInfo('version')
 
-def filter_has_episodes(show):
-  return show['episodeCount'] > 0
+def load_brightcove_data(referenceId):
+  headers = { 'Accept': 'application/json;pk=' + BRIGHTCOVE_PLATFORM_KEY }
+  r = requests.get(BRIGHTCOVE_API_BASE + 'playback/v1/accounts/' + BRIGHTCOVE_ACCOUNT_ID + '/videos/ref:' + referenceId, headers=headers)
+  r.raise_for_status()
+  return r.json()
 
-def map_tv_channel(channel):
-  if channel == 'Channel 9':
-    return 'Nine Network'
-  else:
-    return channel
+def get_largest_image(image):
+  sizes = map(lambda size: int(size[1::]), image['sizes'])
+  sizes.sort()
+  return image['sizes']['w' + str(sizes[-1])]
 
-def show_data_to_xbmc_dict(show):
+def all_shows_dict():
   return {
-    'label': show['title'],
-    'thumbnail': show['image']['showImage'],
-    'path': plugin.url_for('show', slug=show['slug']),
-    'info': {
-      'plot': show['description'],
-      'plotoutline': show['description'],
-      'tvshowtitle': show['title'],
-      'studio': map_tv_channel(show['tvChannel']),
-      'genre': show['genre']
-    },
+    'label': 'All TV Shows',
+    'path': plugin.url_for('all_shows')
+  }
+
+def live_tv_dict():
+  return {
+    'label': 'Live TV',
+    'path': plugin.url_for('live_streams')
+  }
+
+def genre_data_to_xbmc_dict(genre):
+  image = get_largest_image(genre['image'])
+  return {
+    'label': genre['name'],
+    'thumbnail': image,
+    'path': plugin.url_for('genre', genre=genre['slug']),
     'properties': {
-      'fanart_image': show['image']['showImage']
+      'fanart_image': image
     }
   }
-
-def season_data_to_xbmc_dict(season):
-  return {
-    'label': season['title'],
-    'path': plugin.url_for('season', slug=season['slug'])
-  }
-
-def episode_data_to_xbmc_dict(episode):
-  return {
-    'label': episode['title'],
-    'thumbnail': episode['images']['videoStill'],
-    'path': plugin.url_for('play', videoId=episode['videoId']),
-    'info': {
-      'plot': episode['description'],
-      'plotoutline': episode['description'],
-      'episode': episode['episodeNumber'],
-      'genre': episode['genre'],
-      'studio': map_tv_channel(episode['tvChannel'])
-    },
-    'is_playable': True
-  }
-
-def get_api_token(type = 'ninemsnCatchup'):
-  data = load_json(JUMPIN_WIDGET_CONFIG_URL)
-  return data['brightcoveApiTokenLookup'][type]
 
 @plugin.route('/')
 def index():
-  data = load_json(TV_CAT_API_URL + '/shows?take=-1')
-  shows = filter(filter_has_episodes, filter(filter_drm_shows, data['payload']))
-  items = map(show_data_to_xbmc_dict, shows)
+  data = load_api('/pages/genres')
+  items = [ all_shows_dict(), live_tv_dict() ] + map(genre_data_to_xbmc_dict, data['genres'])
+  return plugin.finish(items)
+
+def channel_data_to_xbmc_dict(region):
+  def listing_description(listings):
+    # TODO: include times
+    description = "Now: " + listings[0]['name']
+    if listings[0]['episodeTitle'] is not None:
+      description += ": " + listings[0]['episodeTitle']
+
+    description += "\nNext: " + listings[1]['name']
+    if listings[1]['episodeTitle'] is not None:
+      description += ": " + listings[1]['episodeTitle']
+
+    return description
+  return lambda channel: {
+    'label': "%s %s" % (channel['name'], region['name']),
+    'thumbnail': get_largest_image(channel['image']),
+    'path': plugin.url_for('play_video', referenceId=channel['referenceId']),
+    'is_playable': True,
+    'info': {
+      'plot': listing_description(channel['listings']),
+      'plotoutline': listing_description(channel['listings'])
+    }
+  }
+
+@plugin.route('/live')
+def live_streams():
+  data = load_api('/pages/livestreams')
+  items = map(channel_data_to_xbmc_dict(data['region']), data['channels'])
+  plugin.set_content('tvshows')
+  return plugin.finish(items)
+
+def tv_series_data_to_xbmc_dict(series):
+  image = get_largest_image(series['image'])
+  return {
+    'label': series['name'],
+    'thumbnail': image,
+    'path': plugin.url_for('show', series=series['slug']),
+    'info': {
+      'plot': series['description'],
+      'plotoutline': series['description'],
+      'tvshowtitle': series['name']
+    },
+    'properties': {
+      'fanart_image': image
+    }
+  }
+
+@plugin.route('/shows')
+def all_shows():
+  data = load_api('/pages/tv-series')
+  items = map(tv_series_data_to_xbmc_dict, data['tvSeries'])
   plugin.set_content('tvshows')
   return plugin.finish(items, sort_methods=[SortMethod.LABEL_IGNORE_THE])
 
-@plugin.route('/shows/<slug>')
-def show(slug):
-  data = load_json(TV_CAT_API_URL + '/shows/' + quote(slug, safe='') + '?fields=true')
+@plugin.route('/genre/<genre>')
+def genre(genre):
+  data = load_api('pages/genres/' + genre)
+  items = map(tv_series_data_to_xbmc_dict, data['tvSeries'])
+  plugin.set_content('tvshows')
+  return plugin.finish(items, sort_methods=[SortMethod.LABEL_IGNORE_THE])
 
-  items = map(season_data_to_xbmc_dict, data['seasons'])
+def season_data_to_xbmc_dict(series):
+  image = get_largest_image(series['image'])
+  return lambda season: {
+    'label': season['name'],
+    'thumbnail': image,
+    'path': plugin.url_for('season', series=series['slug'], season=season['slug']),
+    'info': {
+      'plot': series['description'],
+      'plotoutline': series['description'],
+      'tvshowtitle': series['name']
+    },
+    'properties': {
+      'fanart_image': image
+    }
+  }
+
+@plugin.route('/shows/<series>')
+def show(series):
+  data = load_api('pages/tv-series/' + series)
+  items = map(season_data_to_xbmc_dict(data['tvSeries']), data['seasons'])
   plugin.set_content('seasons')
   return plugin.finish(items)
 
-@plugin.route('/seasons/<slug>')
-def season(slug):
-  data = load_json(TV_CAT_API_URL + '/seasons/' + quote(slug, safe='') + '?fields=true')
+def episode_data_to_xbmc_dict(series, season):
+  season_image = get_largest_image(season['image'])
 
-  items = map(episode_data_to_xbmc_dict, data['episodes'])
-
-  def add_show_data(item):
-    item['info'].update({
-      "season": data['title'],
-    })
-    item['properties'] = {
-      'fanart_image': data['show']['image']['showImage']
+  def episode_data_to_xbmc_dict_inner(episode):
+    label = episode['displayName']
+    if episode['video']['drm']:
+      label += ' [DRM/UNPLAYABLE]'
+    return {
+      'label': label,
+      'thumbnail': get_largest_image(episode['image']),
+      'path': episode['video']['brightcoveOnce']['onceUrl'],
+      'is_playable': True,
+      'info': {
+        'plot': episode['description'],
+        'plotoutline': episode['description'],
+        'tvshowtitle': series['name'],
+        'episode': episode['episodeNumber'],
+        'season': season['name'],
+        'genre': episode['genre']['name']
+      },
+      'properties': {
+        'fanart_image': season_image
+      }
     }
-    return item
-  items = map(add_show_data, items)
+  return episode_data_to_xbmc_dict_inner
 
+@plugin.route('/shows/<series>/seasons/<season>')
+def season(series, season):
+  data = load_api('pages/tv-series/' + series + '/seasons/' + season + '/episodes')
+  items = map(episode_data_to_xbmc_dict(data['tvSeries'], data['season']), data['episodes']['items'])
   plugin.set_content('episodes')
   return plugin.finish(items)
 
-@plugin.route('/play/<videoId>')
-def play(videoId):
-  api_token = get_api_token()
-  brightcove = Brightcove(api_token)
-  video = brightcove.find_video_by_id(videoId, media_delivery='http')
-  plugin.set_resolved_url(video.videoFullLength['url'])
+@plugin.route('/play/<referenceId>')
+def play_video(referenceId):
+  data = load_brightcove_data(referenceId)
+  path = data['sources'][0]['src']
+  return plugin.set_resolved_url(path)
+
 
 if __name__ == '__main__':
     plugin.run()
