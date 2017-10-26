@@ -11,17 +11,12 @@ class genre(object):
         self.genre_slug = None
 
     def make_kodi_url(self):
-        d = self.__dict__
-        url = ''
-        if d['thumb']:
-            d['thumb'] = urllib.quote_plus(d['thumb'])
-        if d['fanart']:
-            d['fanart'] = urllib.quote_plus(d['fanart'])
-        if d['genre']:
-            d['genre'] = urllib.quote_plus(d['genre'])
-        for item in d.keys():
-            url += '&{0}={1}'.format(item, d[item])
-        return url
+        d = vars(self)
+        for key, value in d.iteritems():
+            if isinstance(value, unicode):
+                d[key] = unicodedata.normalize(
+                    'NFKD', value).encode('ascii', 'ignore')
+        return '&{0}'.format(urllib.urlencode(d))
 
     def parse_kodi_url(self, url):
         params = urlparse.parse_qsl(url)
@@ -48,22 +43,13 @@ class series(object):
             return self.series_name
 
     def make_kodi_url(self):
-        d = self.__dict__
+        d = vars(self)
         for key, value in d.iteritems():
             if isinstance(value, unicode):
                 d[key] = unicodedata.normalize(
                     'NFKD', value).encode('ascii', 'ignore')
-        url = ''
-        if d['thumb']:
-            d['thumb'] = urllib.quote_plus(d['thumb'])
-        if d['fanart']:
-            d['fanart'] = urllib.quote_plus(d['fanart'])
-        if d['genre']:
-            d['genre'] = urllib.quote_plus(d['genre'])
-        for item in d.keys():
-            url += '&{0}={1}'.format(item, d[item])
-        return url
-
+        return '&{0}'.format(urllib.urlencode(d))
+        
     def parse_kodi_url(self, url):
         params = urlparse.parse_qsl(url)
         for item in params.keys():
@@ -94,19 +80,12 @@ class episode(object):
                                     self.airdate[0:4])
 
     def make_kodi_url(self):
-        d = self.__dict__
+        d = vars(self)
         for key, value in d.iteritems():
             if isinstance(value, unicode):
                 d[key] = unicodedata.normalize(
                     'NFKD', value).encode('ascii', 'ignore')
-        url = ''
-        if d['thumb']:
-            d['thumb'] = urllib.quote_plus(d['thumb'])
-        if d['fanart']:
-            d['fanart'] = urllib.quote_plus(d['fanart'])
-        for item in d.keys():
-            url += '&{0}={1}'.format(item, d[item])
-        return url
+        return '&{0}'.format(urllib.urlencode(d))
 
     def parse_kodi_url(self, url):
         params = urlparse.parse_qsl(url)
@@ -129,19 +108,12 @@ class channel(object):
         return '{0} - {1}'.format(self.title, self.desc)
 
     def make_kodi_url(self):
-        d = self.__dict__
+        d = vars(self)
         for key, value in d.iteritems():
             if isinstance(value, unicode):
                 d[key] = unicodedata.normalize(
                     'NFKD', value).encode('ascii', 'ignore')
-        url = ''
-        if d['thumb']:
-            d['thumb'] = urllib.quote_plus(d['thumb'])
-        if d['fanart']:
-            d['fanart'] = urllib.quote_plus(d['fanart'])
-        for item in d.keys():
-            url += '&{0}={1}'.format(item, d[item])
-        return url
+        return '&{0}'.format(urllib.urlencode(d))
 
     def parse_kodi_url(self, url):
         params = urlparse.parse_qsl(url)

@@ -2,6 +2,7 @@
 <settings>
   <category label="32000">
     <setting id="HLSQUALITY" type="enum" label="32010" values="Lowest 480x270 (260k/s)|Low 640x360 (700k/s) |Medium 640x360 (1.3Mb/s)|High 1024x576 (2.0Mb/s)|Highest 1280x720 (2.7Mb/s)" default="4" />
+    <setting id="LIVEQUALITY" type="enum" label="32020" values="Low 480x270 (440k/s) |Medium 640x360 (930k/s)|High 960x540 (1.5Mb/s)|Highest 1280x720 (2.6Mb/s)" default="3" />
   </category>
   <category label="32001">
     <setting label="32035" type="action" action="RunPlugin(plugin://plugin.video.abc_iview/?action=sendreport)"/>

@@ -3,8 +3,4 @@
 *.pyo
 
 # zip file
-<<<<<<< HEAD
 *.zip
-=======
-*.zip
->>>>>>> origin/master

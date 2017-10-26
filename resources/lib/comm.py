@@ -22,18 +22,19 @@ def list_series():
     data = json.loads(res)
     listing = []
     for show in data['items']:
-        for season in reversed(show['containsSeason']):
-            s = classes.series()
-            s.multi_season = len(show['containsSeason']) > 1
-            s.season_slug = season['slug']
-            s.series_name = show['name']
-            s.season_name = season['name']
-            s.series_slug = season['partOfSeries']['slug']
-            s.fanart = show['image']['sizes']['w1920']
-            s.thumb = season['image']['sizes']['w480']
-            s.genre = season['genre']['name']
-            s.title = s.get_title()
-            listing.append(s)
+        if show.get('containsSeason'):
+            for season in reversed(show['containsSeason']):
+                s = classes.series()
+                s.multi_season = len(show['containsSeason']) > 1
+                s.season_slug = season.get('slug')
+                s.series_name = show.get('name')
+                s.season_name = season.get('name')
+                s.series_slug = season['partOfSeries'].get('slug')
+                s.fanart = show['image']['sizes'].get('w1280')
+                s.thumb = season['image']['sizes'].get('w480')
+                s.genre = season['genre'].get('name')
+                s.title = s.get_title()
+                listing.append(s)
     return listing
 
 
@@ -46,10 +47,10 @@ def list_genres():
     listing = []
     for genre in data['items']:
         g = classes.genre()
-        g.fanart = (genre['image']['sizes']['w1920'])
-        g.thumb = (genre['image']['sizes']['w480'])
-        g.genre_slug = genre['slug']
-        g.title = genre['name']
+        g.fanart = genre['image']['sizes'].get('w1280')
+        g.thumb = genre['image']['sizes'].get('w480')
+        g.genre_slug = genre.get('slug')
+        g.title = genre.get('name')
         listing.append(g)
     return listing
 
@@ -80,15 +81,15 @@ def list_episodes(params):
 
             e = classes.episode()
             e.episode_no = str(episode['episodeNumber'])
-            e.thumb = episode['image']['sizes']['w480']
-            e.fanart = data['tvSeries']['image']['sizes']['w1920']
-            e.episode_name = episode['name'].encode('utf8')
+            e.thumb = episode['image']['sizes'].get('w480')
+            e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
+            e.episode_name = episode.get('name').encode('utf8')
             e.title = e.get_title()
-            e.desc = episode['description']
-            e.duration = episode['video']['duration']//1000
-            e.airdate = episode['airDate']
-            e.id = episode['video']['referenceId']
-            e.drm = episode['video']['drm'] is True
+            e.desc = episode.get('description')
+            e.duration = episode['video'].get('duration')//1000
+            e.airdate = episode.get('airDate')
+            e.id = episode['video'].get('referenceId')
+            e.drm = episode['video'].get('drm')
             listing.append(e)
     return listing
 
@@ -102,12 +103,12 @@ def list_live(params):
     listing = []
     for channel in data['channels']:
         c = classes.channel()
-        c.title = channel['name']
-        c.fanart = channel['image']['sizes']['w1920']
-        c.thumb = channel['image']['sizes']['w480']
-        c.desc = channel['listings'][0]['name']
-        c.episode_name = channel['listings'][0]['episodeTitle']
-        c.id = channel['referenceId']
+        c.title = channel.get('name')
+        c.fanart = channel['image']['sizes'].get('w1280')
+        c.thumb = channel['image']['sizes'].get('w480')
+        c.desc = channel['listings'][0].get('name')
+        c.episode_name = channel['listings'][0].get('episodeTitle')
+        c.id = channel.get('referenceId')
         listing.append(c)
     return listing
 
