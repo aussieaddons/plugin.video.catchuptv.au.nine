@@ -49,7 +49,7 @@ class series(object):
                 d[key] = unicodedata.normalize(
                     'NFKD', value).encode('ascii', 'ignore')
         return '&{0}'.format(urllib.urlencode(d))
-        
+
     def parse_kodi_url(self, url):
         params = urlparse.parse_qsl(url)
         for item in params.keys():

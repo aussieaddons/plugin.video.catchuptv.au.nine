@@ -113,27 +113,44 @@ def list_live(params):
     return listing
 
 
-def get_stream(url, live=False):
-    """Parse live tv JSON and return stream url
+def get_subtitles(text_tracks):
+    """ Parse subtitles url from 'text_tracks' JSON"""
+    for text_track in text_tracks:
+        try:
+            sub_url = text_track.get('src')
+            if sub_url:
+                return sub_url
+        except AttributeError:
+            pass
+    return None
+
+
+def get_stream(url, live=False, subtitles=False):
+    """Parse episode/channel JSON and return stream URL and subtitles URL
     """
     res = fetch_url(url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     data = json.loads(res)
+
     if live:
         return data['sources'][0]['src']
-    else:
-        url = ''
-        for source in data.get('sources'):
-            if (source.get('container') == 'M2TS' or
-                    source.get('type') == 'application/vnd.apple.mpegurl'):
-                if 'https' in source.get('src'):
-                    url = source.get('src')
-                    if url:
-                        return url
+
+    url = ''
+    for source in data.get('sources'):
+        if (source.get('container') == 'M2TS' or
+                source.get('type') == 'application/vnd.apple.mpegurl'):
+            if 'https' in source.get('src'):
+                url = source.get('src')
+                if url:
+                    break
+
+    sub_url = get_subtitles(data.get('text_tracks'))
+
+    return {'url': url, 'sub_url': sub_url}
 
 
 def get_widevine_auth(drm_url):
     """
-    Parse DRM JSON and return license auth URL and manifest URL
+    Parse DRM JSON and return license auth URL, manifest URL, and subtitles URL
     """
     res = fetch_url(drm_url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     data = json.loads(res)
@@ -141,4 +158,8 @@ def get_widevine_auth(drm_url):
         if 'com.widevine.alpha' in source['key_systems']:
             url = source['src']
             key = source['key_systems']['com.widevine.alpha']['license_url']
-            return {'url': url, 'key': key}
+            break
+
+    sub_url = get_subtitles(data.get('text_tracks'))
+
+    return {'url': url, 'key': key, 'sub_url': sub_url}

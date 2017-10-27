@@ -1,14 +1,19 @@
-import xbmcgui
-import xbmcaddon
-import xbmcplugin
 import comm
 import config
+import drmhelper
+import os
 import sys
 import urllib2
 import urlparse
-import drmhelper
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcplugin
 
 from aussieaddonscommon import utils
+
+from pycaption import SRTWriter
+from pycaption import WebVTTReader
 
 _url = sys.argv[0]
 _handle = int(sys.argv[1])
@@ -87,6 +92,7 @@ def play_video(params):
             drm_url = config.BRIGHTCOVE_DRM_URL.format(acc, params['id'])
             widevine = comm.get_widevine_auth(drm_url)
             url = widevine['url']
+            sub_url = widevine['sub_url']
             play_item = xbmcgui.ListItem(path=url)
             play_item.setProperty('inputstream.adaptive.manifest_type',
                                   'mpd')
@@ -103,15 +109,44 @@ def play_video(params):
             else:
                 qual = int(xbmcaddon.Addon().getSetting('HLSQUALITY'))
                 live = False
-        
+
             json_url = config.BRIGHTCOVE_DRM_URL.format(
                 config.BRIGHTCOVE_ACCOUNT, params['id'])
-            m3u8 = comm.get_stream(json_url, live=live)
+            stream_data = comm.get_stream(json_url, live=live)
+            m3u8 = stream_data.get('url')
+            sub_url = stream_data.get('sub_url')
             data = urllib2.urlopen(m3u8).read().splitlines()
             qual = int(xbmcaddon.Addon().getSetting('LIVEQUALITY'))
             url = parse_m3u8(data, m3u8_path=m3u8, qual=qual, live=live)
             play_item = xbmcgui.ListItem(path=url)
-        
+
+        if sub_url:
+            try:
+                utils.log("Enabling subtitles: {0}".format(sub_url))
+                profile = xbmcaddon.Addon().getAddonInfo('profile')
+                subfilename = xbmc.translatePath(
+                    os.path.join(profile, 'subtitle.srt'))
+                profiledir = xbmc.translatePath(os.path.join(profile))
+                if not os.path.isdir(profiledir):
+                    os.makedirs(profiledir)
+
+                webvtt_data = urllib2.urlopen(
+                    sub_url).read().decode('utf-8')
+                if webvtt_data:
+                    with open(subfilename, 'w') as f:
+                        webvtt_subtitle = WebVTTReader().read(webvtt_data)
+                        srt_subtitle = SRTWriter().write(webvtt_subtitle)
+                        srt_unicode = srt_subtitle.encode('utf-8')
+                        f.write(srt_unicode)
+
+                if hasattr(play_item, 'setSubtitles'):
+                    # This function only supported from Kodi v14+
+                    play_item.setSubtitles([subfilename])
+
+            except Exception as e:
+                utils.log('Unable to add subtitles: {0}'.format(e))
+
         xbmcplugin.setResolvedUrl(_handle, True, play_item)
+
     except Exception:
         utils.handle_error('Unable to play video')
