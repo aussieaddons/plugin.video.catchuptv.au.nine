@@ -130,22 +130,25 @@ def get_stream(url, live=False, subtitles=False):
     """
     res = fetch_url(url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     data = json.loads(res)
-
+    stream = {}
+    
     if live:
-        return data['sources'][0]['src']
+        stream['url'] = data['sources'][0].get('src')
+        return stream
 
-    url = ''
+    url = None
     for source in data.get('sources'):
         if (source.get('container') == 'M2TS' or
                 source.get('type') == 'application/vnd.apple.mpegurl'):
             if 'https' in source.get('src'):
                 url = source.get('src')
                 if url:
+                    stream['url'] = url
                     break
 
-    sub_url = get_subtitles(data.get('text_tracks'))
+    stream['sub_url'] = get_subtitles(data.get('text_tracks'))
 
-    return {'url': url, 'sub_url': sub_url}
+    return stream
 
 
 def get_widevine_auth(drm_url):
@@ -154,12 +157,14 @@ def get_widevine_auth(drm_url):
     """
     res = fetch_url(drm_url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     data = json.loads(res)
+    stream = {}
     for source in data['sources']:
         if 'com.widevine.alpha' in source['key_systems']:
             url = source['src']
             key = source['key_systems']['com.widevine.alpha']['license_url']
+            stream.update({'url': url, 'key': key})
             break
 
-    sub_url = get_subtitles(data.get('text_tracks'))
+    stream['sub_url'] = get_subtitles(data.get('text_tracks'))
 
-    return {'url': url, 'key': key, 'sub_url': sub_url}
+    return stream
