@@ -1,0 +1,6 @@
+# python pyc
+*.pyc
+*.pyo
+
+# zip file
+*.zip
