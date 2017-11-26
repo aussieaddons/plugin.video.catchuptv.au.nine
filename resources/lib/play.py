@@ -36,8 +36,9 @@ def parse_m3u8(m3u8_url, qual=-1, live=False):
     data = urllib2.urlopen(m3u8_url).read().splitlines()
     iterable = iter(data)
     for line in iterable:
-        if line.startswith('#EXT-X-STREAM-INF:'):
-            buff = StringIO.StringIO(line)
+        prefix = '#EXT-X-STREAM-INF:'
+        if line.startswith(prefix):
+            buff = StringIO.StringIO(line[len(prefix):])
             for line in csv.reader(buff):
                 stream_inf = line
                 break
