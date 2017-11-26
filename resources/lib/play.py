@@ -1,7 +1,9 @@
 import comm
 import config
+import csv
 import drmhelper
 import os
+import StringIO
 import sys
 import urllib2
 import urlparse
@@ -19,59 +21,46 @@ _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 
-def parse_m3u8(data, m3u8_path, qual=-1, live=False):
+def parse_m3u8(m3u8_url, qual=-1, live=False):
     """
     Parse the retrieved m3u8 stream list into a list of dictionaries
     then return the url for the highest quality stream.
     """
-    ver = 0
-    if '#EXT-X-VERSION:3' in data:
-        ver = 3
-        data.remove('#EXT-X-VERSION:3')
-    if '#EXT-X-VERSION:4' in data:
-        ver = 4
-        data.remove('#EXT-X-VERSION:4')
-    if '#EXT-X-INDEPENDENT-SEGMENTS' in data:
-        data.remove('#EXT-X-INDEPENDENT-SEGMENTS')
-    count = 1
-    m3u_list = []
-    while count < len(data):
-        if ver == 3 or ver == 0:
-            line = data[count]
-            line = line.strip('#EXT-X-STREAM-INF:')
-            line = line.strip('PROGRAM-ID=1,')
-            if 'CODECS' in line:
-                line = line[:line.find('CODECS')]
-            if line.endswith(','):
-                line = line[:-1]
-            line = line.strip()
-            line = line.split(',')
-            linelist = [i.split('=') for i in line]
-            if live:
-                url = urlparse.urljoin(m3u8_path, data[count + 1])
-            else:
-                url = data[count + 1]
-            linelist.append(['URL', url])
-            m3u_list.append(dict((i[0], i[1]) for i in linelist))
-            count += 2
+    # most shows have 5 streams of different quality, but some have 6 or more
+    # so we'll make sure that the highest quality is chosen if it's set that
+    # way in the settings.
+    if qual == config.MAX_HLS_QUAL:
+        qual = -1
 
-        if ver == 4:
-            line = data[count]
-            line = line.strip('#EXT-X-STREAM-INF:')
-            line = line.strip('PROGRAM-ID=1,')
-            values = line.split(',')
-            for value in values:
-                if value.startswith('BANDWIDTH'):
-                    bw = value
-                elif value.startswith('RESOLUTION'):
-                    res = value
-            url = urlparse.urljoin(m3u8_path, data[count + 1])
-            m3u_list.append(
-                dict([bw.split('='), res.split('='), ['URL', url]]))
-            count += 3
+    m3u_list = []
+    data = urllib2.urlopen(m3u8_url).read().splitlines()
+    iterable = iter(data)
+    for line in iterable:
+        if line.startswith('#EXT-X-STREAM-INF:'):
+            buff = StringIO.StringIO(line)
+            for line in csv.reader(buff):
+                stream_inf = line
+                break
+            # hack because csv can't parse commas in quotes if preceded by text
+            # 'CODECS="mp4a.40.2,avc1.420015"'
+            enum = enumerate(stream_inf)
+            for idx, x in enum:
+                if x.count('"') == 1:
+                    stream_inf[idx] = '{0},{1}'.format(x, stream_inf[idx + 1])
+                    stream_inf.pop(idx + 1)
+                    next(enum)
+
+            stream_data = dict(map(lambda x: x.split('='), stream_inf))
+            if live:
+                url = urlparse.urljoin(m3u8_url, iterable.next())
+            else:
+                url = iterable.next()
+            stream_data['URL'] = url
+            m3u_list.append(stream_data)
 
     sorted_m3u_list = sorted(m3u_list, key=lambda k: int(k['BANDWIDTH']))
     utils.log('Available streams are: {0}'.format(sorted_m3u_list))
+    utils.log('Quality is: {0}'.format(qual))
     try:
         stream = sorted_m3u_list[qual]['URL']
     except IndexError:  # less streams than we expected - go with highest
@@ -115,9 +104,7 @@ def play_video(params):
             stream_data = comm.get_stream(json_url, live=live)
             m3u8 = stream_data.get('url')
             sub_url = stream_data.get('sub_url')
-            data = urllib2.urlopen(m3u8).read().splitlines()
-            qual = int(xbmcaddon.Addon().getSetting('LIVEQUALITY'))
-            url = parse_m3u8(data, m3u8_path=m3u8, qual=qual, live=live)
+            url = parse_m3u8(m3u8, qual=qual, live=live)
             play_item = xbmcgui.ListItem(path=url)
 
         if sub_url:

@@ -125,13 +125,13 @@ def get_subtitles(text_tracks):
     return None
 
 
-def get_stream(url, live=False, subtitles=False):
+def get_stream(url, live=False):
     """Parse episode/channel JSON and return stream URL and subtitles URL
     """
     res = fetch_url(url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     data = json.loads(res)
     stream = {}
-    
+
     if live:
         stream['url'] = data['sources'][0].get('src')
         return stream
@@ -139,7 +139,11 @@ def get_stream(url, live=False, subtitles=False):
     url = None
     for source in data.get('sources'):
         if (source.get('container') == 'M2TS' or
-                source.get('type') == 'application/vnd.apple.mpegurl'):
+                source.get('type') == 'application/vnd.apple.mpegurl' or
+                source.get('type') == 'application/x-mpegURL'):
+            if (source.get('type') == 'application/x-mpegURL' and
+                    source.get('ext_x_version') in ['4', '5']):
+                        continue
             if 'https' in source.get('src'):
                 url = source.get('src')
                 if url:

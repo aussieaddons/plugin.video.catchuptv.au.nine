@@ -75,9 +75,10 @@ class episode(object):
         return 'Ep {0} - {1}'.format(self.episode_no, self.episode_name)
 
     def get_airdate(self):
-        return '{0}.{1}.{2}'.format(self.airdate[8:10],
-                                    self.airdate[5:7],
-                                    self.airdate[0:4])
+        if self.airdate:
+            return '{0}.{1}.{2}'.format(self.airdate[8:10],
+                                        self.airdate[5:7],
+                                        self.airdate[0:4])
 
     def make_kodi_url(self):
         d = vars(self)

@@ -15,3 +15,5 @@ BRIGHTCOVE_URL = "http://c.brightcove.com/services/mobile/streaming/index/master
 BRIGHTCOVE_DRM_URL = "https://edge.api.brightcove.com/playback/v1/accounts/{0}/videos/ref:{1}"
 BRIGHTCOVE_ACCOUNT = "4460760524001"
 BRIGHTCOVE_KEY = "BCpkADawqM1TWX5yhWjKdzhXnHCmGvnaozGSDICiEFNRv0fs12m6WA2hLxMHM8TGAEM6pv7lhJsdNhiQi76p4IcsT_jmXdtEU-wnfXhOBTx-cGR7guCqVwjyFAtQa75PFF-TmWESuiYaNTzg"
+
+MAX_HLS_QUAL = 4
