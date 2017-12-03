@@ -5,10 +5,10 @@
     <setting id="LIVEQUALITY" type="enum" label="32020" values="Low 480x270 (440k/s) |Medium 640x360 (930k/s)|High 960x540 (1.5Mb/s)|Highest 1280x720 (2.6Mb/s)" default="3" />
   </category>
   <category label="32001">
-    <setting label="32035" type="action" action="RunPlugin(plugin://plugin.video.abc_iview/?action=sendreport)"/>
-    <setting label="32036" type="action" action="RunPlugin(plugin://plugin.video.abc_iview/?action=update_ia)"/>
-    <setting label="32033" type="action" action="RunPlugin(plugin://plugin.video.9now/?action=reinstall_ssd_wv)"/>
-    <setting label="32034" type="action" action="RunPlugin(plugin://plugin.video.9now/?action=reinstall_widevine_cdm)"/>
+    <setting label="32035" type="action" action="RunPlugin(plugin://plugin.video.catchuptv.au.nine/?action=sendreport)"/>
+    <setting label="32036" type="action" action="RunPlugin(plugin://plugin.video.catchuptv.au.nine/?action=update_ia)"/>
+    <setting label="32033" type="action" action="RunPlugin(plugin://plugin.video.catchuptv.au.nine/?action=reinstall_ssd_wv)"/>
+    <setting label="32034" type="action" action="RunPlugin(plugin://plugin.video.catchuptv.au.nine/?action=reinstall_widevine_cdm)"/>
     <setting id="ignore_drm" label="32037" type="bool" default="false" />
   </category>
 </settings>
