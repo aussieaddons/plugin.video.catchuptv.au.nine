@@ -3,6 +3,7 @@ import config
 import json
 
 from aussieaddonscommon import session
+from aussieaddonscommon import utils
 
 
 def fetch_url(url, headers={}):
@@ -27,8 +28,8 @@ def list_series():
                 s = classes.series()
                 s.multi_season = len(show['containsSeason']) > 1
                 s.season_slug = season.get('slug')
-                s.series_name = show.get('name')
-                s.season_name = season.get('name')
+                s.series_name = utils.ensure_ascii(show.get('name'))
+                s.season_name = utils.ensure_ascii(season.get('name'))
                 s.series_slug = season['partOfSeries'].get('slug')
                 s.fanart = show['image']['sizes'].get('w1280')
                 s.thumb = season['image']['sizes'].get('w480')
@@ -85,7 +86,7 @@ def list_episodes(params):
             e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
             e.episode_name = episode.get('name').encode('utf8')
             e.title = e.get_title()
-            e.desc = episode.get('description')
+            e.desc = utils.ensure_ascii(episode.get('description'))
             e.duration = episode['video'].get('duration')//1000
             e.airdate = episode.get('airDate')
             e.id = episode['video'].get('referenceId')
