@@ -72,6 +72,9 @@ def list_episodes(params):
                ['episode-index', 'external']):
                 continue
         for episode in section['items']:
+            # filter possible blank entries
+            if not episode:
+                continue
             # filter extras again as some show are unable to be filtered at the
             # previous step
             if not episode.get('episodeNumber'):
