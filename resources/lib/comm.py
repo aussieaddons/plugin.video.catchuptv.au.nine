@@ -12,15 +12,19 @@ def fetch_url(url, headers={}):
     """
     with session.Session(force_tlsv1=True) as sess:
         res = sess.get(url, headers=headers)
-        return res.text
+        try:
+            data = json.loads(res.text)
+            return data
+        except ValueError as e:
+            utils.log('Error parsing JSON, response is {0}'.format(res.text))
+            raise e
 
 
 def list_series():
     """
     Create and return list of series objects
     """
-    res = fetch_url(config.TVSERIES_URL)
-    data = json.loads(res)
+    data = fetch_url(config.TVSERIES_URL)
     listing = []
     for show in data['items']:
         if show.get('containsSeason'):
@@ -43,8 +47,7 @@ def list_genres():
     """
     Create and return list of genre objects
     """
-    res = fetch_url(config.GENRES_URL)
-    data = json.loads(res)
+    data = fetch_url(config.GENRES_URL)
     listing = []
     for genre in data['items']:
         g = classes.genre()
@@ -62,8 +65,7 @@ def list_episodes(params):
     """
     url = config.EPISODEQUERY_URL.format(
         params['series_slug'], params['season_slug'])
-    res = fetch_url(url)
-    data = json.loads(res)
+    data = fetch_url(url)
     listing = []
     for section in data['items']:
         # filter extras etc for most shows.
@@ -102,8 +104,7 @@ def list_live(params):
     """
     Create and return list of channel objects
     """
-    res = fetch_url(config.LIVETV_URL)
-    data = json.loads(res)
+    data = fetch_url(config.LIVETV_URL)
     listing = []
     for channel in data['channels']:
         c = classes.channel()
@@ -132,8 +133,7 @@ def get_subtitles(text_tracks):
 def get_stream(url, live=False):
     """Parse episode/channel JSON and return stream URL and subtitles URL
     """
-    res = fetch_url(url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
-    data = json.loads(res)
+    data = fetch_url(url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     stream = {}
 
     if live:
@@ -163,8 +163,7 @@ def get_widevine_auth(drm_url):
     """
     Parse DRM JSON and return license auth URL, manifest URL, and subtitles URL
     """
-    res = fetch_url(drm_url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
-    data = json.loads(res)
+    data = fetch_url(drm_url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     stream = {}
     for source in data['sources']:
         if 'com.widevine.alpha' in source['key_systems']:
