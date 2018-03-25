@@ -40,7 +40,9 @@ def fetch_bc_url(url, headers={}):
                         ''.format(data[0].get('client_geo')))
                 else:
                     raise e
-            except:
+            except IndexError:
+                raise e
+            except ValueError:
                 raise e
         else:
             raise e
