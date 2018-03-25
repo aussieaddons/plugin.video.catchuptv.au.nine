@@ -5,7 +5,6 @@ import drmhelper
 import os
 import StringIO
 import sys
-import urllib2
 import urlparse
 import xbmc
 import xbmcaddon
@@ -13,6 +12,7 @@ import xbmcgui
 import xbmcplugin
 
 from aussieaddonscommon import utils
+from aussieaddonscommon import session as custom_session
 
 from pycaption import SRTWriter
 from pycaption import WebVTTReader
@@ -33,7 +33,8 @@ def parse_m3u8(m3u8_url, qual=-1, live=False):
         qual = -1
 
     m3u_list = []
-    data = urllib2.urlopen(m3u8_url).read().splitlines()
+    with custom_session.Session() as s:
+        data = s.get(m3u8_url, verify=False).text.splitlines()
     iterable = iter(data)
     for line in iterable:
         prefix = '#EXT-X-STREAM-INF:'
@@ -74,13 +75,14 @@ def play_video(params):
     Determine content and pass url to Kodi for playback
     """
     try:
+        json_url = config.BRIGHTCOVE_DRM_URL.format(
+                config.BRIGHTCOVE_ACCOUNT, params['id'])
+
         if params['drm'] == 'True':
             if xbmcaddon.Addon().getSetting('ignore_drm') == 'false':
                 if not drmhelper.check_inputstream():
                     return
-            acc = config.BRIGHTCOVE_ACCOUNT
-            drm_url = config.BRIGHTCOVE_DRM_URL.format(acc, params['id'])
-            widevine = comm.get_widevine_auth(drm_url)
+            widevine = comm.get_widevine_auth(json_url)
             url = widevine['url']
             sub_url = widevine['sub_url']
             play_item = xbmcgui.ListItem(path=url)
@@ -100,13 +102,12 @@ def play_video(params):
                 qual = int(xbmcaddon.Addon().getSetting('HLSQUALITY'))
                 live = False
 
-            json_url = config.BRIGHTCOVE_DRM_URL.format(
-                config.BRIGHTCOVE_ACCOUNT, params['id'])
             stream_data = comm.get_stream(json_url, live=live)
             m3u8 = stream_data.get('url')
             sub_url = stream_data.get('sub_url')
             url = parse_m3u8(m3u8, qual=qual, live=live)
             play_item = xbmcgui.ListItem(path=url)
+            utils.log('Playing {0} - {1}'.format(params.get('title'), url))
 
         if sub_url:
             try:
@@ -118,8 +119,8 @@ def play_video(params):
                 if not os.path.isdir(profiledir):
                     os.makedirs(profiledir)
 
-                webvtt_data = urllib2.urlopen(
-                    sub_url).read().decode('utf-8')
+                with custom_session.Session() as s:
+                    webvtt_data = s.get(sub_url).text
                 if webvtt_data:
                     with open(subfilename, 'w') as f:
                         webvtt_subtitle = WebVTTReader().read(webvtt_data)

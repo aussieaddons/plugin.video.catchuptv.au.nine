@@ -1,7 +1,9 @@
 import classes
 import config
 import json
+import requests
 
+from aussieaddonscommon.exceptions import AussieAddonsException
 from aussieaddonscommon import session
 from aussieaddonscommon import utils
 
@@ -17,6 +19,30 @@ def fetch_url(url, headers={}):
             return data
         except ValueError as e:
             utils.log('Error parsing JSON, response is {0}'.format(res.text))
+            raise e
+
+
+def fetch_bc_url(url, headers={}):
+    """
+    Use fetch_url and catch Brightcove API errors
+    """
+    try:
+        data = fetch_url(url=url, headers=headers)
+        return data
+    except requests.exceptions.HTTPError as e:
+        utils.log(e.response.text)
+        if e.response.status_code == 403:
+            try:
+                data = json.loads(e.response.text)
+                if data[0].get('error_subcode') == 'CLIENT_GEO':
+                    raise AussieAddonsException(
+                        'Content is geoblocked, your detected country is: {0}'
+                        ''.format(data[0].get('client_geo')))
+                else:
+                    raise e
+            except:
+                raise e
+        else:
             raise e
 
 
@@ -133,7 +159,7 @@ def get_subtitles(text_tracks):
 def get_stream(url, live=False):
     """Parse episode/channel JSON and return stream URL and subtitles URL
     """
-    data = fetch_url(url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
+    data = fetch_bc_url(url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     stream = {}
 
     if live:
@@ -163,7 +189,8 @@ def get_widevine_auth(drm_url):
     """
     Parse DRM JSON and return license auth URL, manifest URL, and subtitles URL
     """
-    data = fetch_url(drm_url, headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
+    data = fetch_bc_url(drm_url,
+                        headers={'BCOV-POLICY': config.BRIGHTCOVE_KEY})
     stream = {}
     for source in data['sources']:
         if 'com.widevine.alpha' in source['key_systems']:
