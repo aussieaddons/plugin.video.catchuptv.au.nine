@@ -33,11 +33,11 @@ def fetch_bc_url(url, headers={}):
         utils.log(e.response.text)
         if e.response.status_code == 403:
             try:
-                data = json.loads(e.response.text)
-                if data[0].get('error_subcode') == 'CLIENT_GEO':
+                error_data = json.loads(e.response.text)
+                if error_data[0].get('error_subcode') == 'CLIENT_GEO':
                     raise AussieAddonsException(
                         'Content is geoblocked, your detected country is: {0}'
-                        ''.format(data[0].get('client_geo')))
+                        ''.format(error_data[0].get('client_geo')))
                 else:
                     raise e
             except IndexError:
