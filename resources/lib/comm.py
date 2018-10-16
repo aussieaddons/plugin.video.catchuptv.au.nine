@@ -91,40 +91,40 @@ def list_episodes(params):
     """
     Create and return list of episode objects
     """
-    url = config.EPISODEQUERY_URL.format(
-        params['series_slug'], params['season_slug'])
-    data = fetch_url(url)
-    listing = []
-    for section in data['items']:
-        # filter extras etc for most shows.
-        if section.get('callToAction'):
-            if (section['callToAction']['link']['type'] not in
-               ['episode-index', 'external']):
-                continue
-        for episode in section['items']:
-            # filter possible blank entries
-            if not episode:
-                continue
-            # filter extras again as some show are unable to be filtered at the
-            # previous step
-            if not episode.get('episodeNumber'):
-                continue
-            # make sure season numbers match, some shows return all seasons.
-            if episode['partOfSeason'].get('slug') != params['season_slug']:
-                continue
+    def get_metadata(episode):
+        if not episode:
+            return
+        # filter extras again as some show are unable to be filtered at the
+        # previous step
+        if not episode.get('episodeNumber'):
+            return
+        # make sure season numbers match, some shows return all seasons.
+        if episode['partOfSeason'].get('slug') != params['season_slug']:
+            return
 
-            e = classes.episode()
-            e.episode_no = str(episode['episodeNumber'])
-            e.thumb = episode['image']['sizes'].get('w480')
-            e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
-            e.episode_name = episode.get('name').encode('utf8')
-            e.title = e.get_title()
-            e.desc = utils.ensure_ascii(episode.get('description'))
-            e.duration = episode['video'].get('duration')//1000
-            e.airdate = episode.get('airDate')
-            e.id = episode['video'].get('referenceId')
-            e.drm = episode['video'].get('drm')
+        e = classes.episode()
+        e.episode_no = str(episode['episodeNumber'])
+        e.thumb = episode['image']['sizes'].get('w480')
+        e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
+        e.episode_name = episode.get('name').encode('utf8')
+        e.title = e.get_title()
+        e.desc = utils.ensure_ascii(episode.get('description'))
+        e.duration = episode['video'].get('duration')//1000
+        e.airdate = episode.get('airDate')
+        e.id = episode['video'].get('referenceId')
+        e.drm = episode['video'].get('drm')
+        return e
+
+    listing = []
+
+    url = config.EPISODEQUERY_URL.format(
+        params['series_slug'], params['season_slug']+'/episodes')
+    data = fetch_url(url)
+    for episode in data['episodes'].get('items'):
+        e = get_metadata(episode)
+        if e:
             listing.append(e)
+
     return listing
 
 

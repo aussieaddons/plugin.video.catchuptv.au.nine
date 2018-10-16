@@ -44,14 +44,17 @@ class series(object):
 
     def make_kodi_url(self):
         d = vars(self)
-        for key, value in d.iteritems():
-            if isinstance(value, unicode):
+        for key in d.keys():
+            if not d[key]:
+                d.pop(key)
+                continue
+            if isinstance(d[key], unicode):
                 d[key] = unicodedata.normalize(
-                    'NFKD', value).encode('ascii', 'ignore')
+                    'NFKD', d[key]).encode('ascii', 'ignore')
         return '&{0}'.format(urllib.urlencode(d))
 
     def parse_kodi_url(self, url):
-        params = urlparse.parse_qsl(url)
+        params = dict(urlparse.parse_qsl(url))
         for item in params.keys():
             setattr(self, item, urllib.unquote_plus(params[item]))
 

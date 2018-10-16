@@ -26,17 +26,13 @@ def router(paramstring):
     if paramstring:
         if paramstring != 'content_type=video':
             if params['action'] == 'listcategories':
-                if params['category'] == 'All Shows':
-                    menu.make_series_list(paramstring)
-                elif params['category'] == 'Live TV':
+                if params['category'] == 'Live TV':
                     menu.make_live_list(paramstring)
                 else:
                     menu.make_series_list(paramstring)
             elif params['action'] == 'listseries':
                 menu.make_episodes_list(paramstring)
-            elif params['action'] == 'listepisodes':
-                play.play_video(params)
-            elif params['action'] == 'listchannels':
+            elif params['action'] in ['listepisodes', 'listchannels']:
                 play.play_video(params)
             elif params['action'] == 'settings':
                 xbmcaddon.Addon().openSettings()
