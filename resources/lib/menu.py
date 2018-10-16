@@ -32,7 +32,7 @@ def list_categories():
                                   thumbnailImage=g.thumb)
             li.setArt({'fanart': g.fanart})
             url_string = '{0}?action=listcategories&category=genre&genre={1}'
-            url = url_string.format(_url, g.title)
+            url = url_string.format(_url, urllib.quote_plus(g.title))
             is_folder = True
             listing.append((url, li, is_folder))
         li = xbmcgui.ListItem('Settings')
