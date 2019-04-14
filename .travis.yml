@@ -1,7 +1,11 @@
 language: python
+python: 2.7
 env:
   global:
     - secure: QaqFIFHqxo94x3L+qe5uDIibwJzHX6yCvZVFqMPt+Advwj4OKX0B9X6b/vIA0swWpJ3Od54Oxx0CR9tZxvUXhSTZxlN8mFJt8pSmMH1M82PllFo3KnCzLqp2Sbgp+fJEUI75Fg5yLJcheJ9/EfDptGIZCQc2LND1WL3QEV/EaKs=
+notifications:
+  slack:
+    secure: fBecuFt6/mBRp84W+vgwYIH0aKdktVr3u4y1jZ/YxtwKFLEzAuhFpsqojenDPdYBPjWLj5nT6knQ802zWd+EwmkvGoW3TLFVjHkiGu/f/QgQnUsrgE0Ckclde4PS6nz5udFnWG4xrXLqLv4KXni1D3J338qyyCkAPdpoZXx5VVQ=
 install:
   - pip install GitPython
   - export TRAVIS_COMMIT_MSG="$TRAVIS_REPO_SLUG - $(git log --format=%B --no-merges -n 1)"
@@ -11,7 +15,7 @@ script:
   - git config --global user.email 'aussieaddons@aussieaddons.com'
   - git config --global user.name 'Aussie Add-ons Bot'
   - >
-    git clone https://github.com/xbmc-catchuptv-au/repo-devel.git $TRAVIS_BUILD_DIR/.deploy-devel &&
+    git clone https://github.com/aussieaddons/repo-devel.git $TRAVIS_BUILD_DIR/.deploy-devel &&
     cd $TRAVIS_BUILD_DIR/.deploy-devel &&
     ./manage_repo.py $TRAVIS_BUILD_DIR || travis_terminate 1
   - git config credential.helper "store --file=.git/credentials"
@@ -22,7 +26,7 @@ script:
     git push || travis_terminate 1
   - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi
   - >
-    git clone https://github.com/xbmc-catchuptv-au/repo.git $TRAVIS_BUILD_DIR/.deploy-prod &&
+    git clone https://github.com/aussieaddons/repo.git $TRAVIS_BUILD_DIR/.deploy-prod &&
     cd $TRAVIS_BUILD_DIR/.deploy-prod &&
     ./manage_repo.py $TRAVIS_BUILD_DIR || travis_terminate 1
   - git config credential.helper "store --file=.git/credentials"
