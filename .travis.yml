@@ -4,8 +4,8 @@ env:
   global:
     - secure: QaqFIFHqxo94x3L+qe5uDIibwJzHX6yCvZVFqMPt+Advwj4OKX0B9X6b/vIA0swWpJ3Od54Oxx0CR9tZxvUXhSTZxlN8mFJt8pSmMH1M82PllFo3KnCzLqp2Sbgp+fJEUI75Fg5yLJcheJ9/EfDptGIZCQc2LND1WL3QEV/EaKs=
 notifications:
-  slack:
-    secure: fBecuFt6/mBRp84W+vgwYIH0aKdktVr3u4y1jZ/YxtwKFLEzAuhFpsqojenDPdYBPjWLj5nT6knQ802zWd+EwmkvGoW3TLFVjHkiGu/f/QgQnUsrgE0Ckclde4PS6nz5udFnWG4xrXLqLv4KXni1D3J338qyyCkAPdpoZXx5VVQ=
+  slack:
+    secure: fBecuFt6/mBRp84W+vgwYIH0aKdktVr3u4y1jZ/YxtwKFLEzAuhFpsqojenDPdYBPjWLj5nT6knQ802zWd+EwmkvGoW3TLFVjHkiGu/f/QgQnUsrgE0Ckclde4PS6nz5udFnWG4xrXLqLv4KXni1D3J338qyyCkAPdpoZXx5VVQ=
 install:
   - pip install GitPython
   - export TRAVIS_COMMIT_MSG="$TRAVIS_REPO_SLUG - $(git log --format=%B --no-merges -n 1)"
