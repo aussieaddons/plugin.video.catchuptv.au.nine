@@ -143,6 +143,15 @@ def list_live(params):
         c.episode_name = channel['listings'][0].get('episodeTitle')
         c.id = channel.get('referenceId')
         listing.append(c)
+    for channel in data['events']:
+        c = classes.channel()
+        c.title = channel.get('name')
+        c.fanart = channel['image']['sizes'].get('w1280')
+        c.thumb = channel['image']['sizes'].get('w480')
+        c.desc = channel.get('description')
+        c.episode_name = channel.get('name')
+        c.id = channel.get('referenceId')
+        listing.append(c)
     return listing
 
 
