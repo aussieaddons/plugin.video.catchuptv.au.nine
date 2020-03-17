@@ -113,7 +113,7 @@ def list_episodes(params):
         e.airdate = episode.get('airDate')
         e.id = episode['video'].get('referenceId')
         e.drm = episode['video'].get('drm')
-        return 
+        return e
     
     def get_clipmetadata(episode):
         e = classes.episode()
