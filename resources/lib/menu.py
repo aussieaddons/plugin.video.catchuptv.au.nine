@@ -50,6 +50,39 @@ def make_episodes_list(url):
         episodes = comm.list_episodes(params)
         listing = []
         for e in episodes:
+            
+            li = xbmcgui.ListItem(e.title, iconImage=e.thumb,
+                                  thumbnailImage=e.thumb)
+            li.setArt({'fanart': e.fanart})
+            url = '{0}?action=listepisodes{1}'.format(_url, e.make_kodi_url())
+            if e.title == 'All Clips': 
+                is_folder = True
+                url = '{0}?action=listclips{1}'.format(_url, e.make_kodi_url())
+            else:
+                is_folder = False
+                li.setProperty('IsPlayable', 'true')                
+                if e.drm is True:
+                    li.setProperty('inputstreamaddon', 'inputstream.adaptive')
+                li.setInfo('video', {'plot': e.desc,
+                                     'plotoutline': e.desc,
+                                     'duration': e.duration,
+                                     'date': e.get_airdate()})
+            li.setProperty('IsPlayable', 'true')
+            listing.append((url, li, is_folder))
+
+        xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
+        xbmcplugin.endOfDirectory(_handle)
+    except Exception:
+        utils.handle_error('Unable to list episodes')
+
+
+def make_clips_list(url):
+    """ Make list of episode Listitems for Kodi"""
+    try:
+        params = dict(urlparse.parse_qsl(url))
+        episodes = comm.list_clips(params)
+        listing = []
+        for e in episodes:
             li = xbmcgui.ListItem(e.title, iconImage=e.thumb,
                                   thumbnailImage=e.thumb)
             li.setArt({'fanart': e.fanart})
@@ -67,8 +100,8 @@ def make_episodes_list(url):
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
         xbmcplugin.endOfDirectory(_handle)
     except Exception:
-        utils.handle_error('Unable to list episodes')
-
+        utils.handle_error('Unable to list clips')
+ 
 
 def make_live_list(url):
     """ Make list of channel Listitems for Kodi"""
