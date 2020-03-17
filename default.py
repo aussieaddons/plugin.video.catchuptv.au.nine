@@ -32,6 +32,8 @@ def router(paramstring):
                     menu.make_series_list(paramstring)
             elif params['action'] == 'listseries':
                 menu.make_episodes_list(paramstring)
+            elif params['action'] == 'listclips':
+                menu.make_clips_list(paramstring) 
             elif params['action'] in ['listepisodes', 'listchannels']:
                 play.play_video(params)
             elif params['action'] == 'settings':
