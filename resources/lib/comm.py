@@ -113,6 +113,22 @@ def list_episodes(params):
         e.airdate = episode.get('airDate')
         e.id = episode['video'].get('referenceId')
         e.drm = episode['video'].get('drm')
+        return 
+    
+    def get_clipmetadata(episode):
+        e = classes.episode()
+        e.episode_no = 'CLIP'
+        #str(episode['episodeNumber'])
+        e.thumb = episode['image']['sizes'].get('w480')
+        e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
+        e.episode_name = episode.get('name').encode('utf8')
+        #e.title = 'CLIP:'+ e.get_title()
+        e.title = e.get_title()
+        e.desc = utils.ensure_ascii(episode.get('description'))
+        e.duration = episode['video'].get('duration')//1000
+        e.airdate = episode.get('airDate')
+        e.id = episode['video'].get('referenceId')
+        e.drm = episode['video'].get('drm')
         return e
 
     listing = []
@@ -124,9 +140,58 @@ def list_episodes(params):
         e = get_metadata(episode)
         if e:
             listing.append(e)
-
+    url = config.EPISODEQUERY_URL.format(
+        params['series_slug'], params['season_slug'])
+    data = fetch_url(url)
+    if data['items'][0].get('title') == 'Latest Clips': 
+    #    add menu item for "All Clips"
+        e = classes.episode()
+        e.episode_no = 'ALLCLIPS'
+        e.duration = 0
+        e.title = 'All Clips'
+        e.series_slug = params['series_slug']
+        e.season_slug = params['season_slug']
+        
+        listing.append(e)
+        
+        for episode in data['items'][0].get('items'):
+            e = get_clipmetadata(episode)
+            if e:
+                listing.append(e)
+                
     return listing
 
+def list_clips(params):
+    """
+    Create and return list of episode objects
+    """      
+    def get_clipmetadata(episode):
+        e = classes.episode()
+        e.episode_no = 'CLIP'
+        #str(episode['episodeNumber'])
+        e.thumb = episode['image']['sizes'].get('w480')
+        e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
+        e.episode_name = episode.get('name').encode('utf8')
+        #e.title = 'CLIP:'+ e.get_title()
+        e.title = e.get_title()
+        e.desc = utils.ensure_ascii(episode.get('description'))
+        e.duration = episode['video'].get('duration')//1000
+        e.airdate = episode.get('airDate')
+        e.id = episode['video'].get('referenceId')
+        e.drm = episode['video'].get('drm')
+        return e
+
+    listing = []
+
+    url = config.EPISODEQUERY_URL.format(
+        params['series_slug'], params['season_slug']+'/clips')
+    data = fetch_url(url)
+    for episode in data['clips'].get('items'):
+        e = get_clipmetadata(episode)
+        if e:
+            listing.append(e)
+
+    return listing
 
 def list_live(params):
     """
