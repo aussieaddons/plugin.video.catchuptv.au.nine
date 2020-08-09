@@ -187,19 +187,18 @@ class CacheObj():
             if rawData:
                 try:
                     cachedData = eval(rawData)
-                    if cachedData[0] > now:
+                    if not isinstance(expiry, datetime.timedelta):
+                        expiry = CacheObj.maxTTL
+                    if cachedData[0] + expiry > now:
                         return cachedData[1]
                 except Exception as e:
                     utils.log('Error with eval of cached data: {0}'.format(e))
                     #utils.log(rawData)
 
-        if not isinstance(expiry, datetime.datetime):
-            expiry = now + CacheObj.maxTTL
-
         if not data:
             data = CacheObj.fetch_url(url=url, headers=headers)
 
-        cachedData = (expiry, data)
+        cachedData = (now, data)
         self.win.setProperty('%s|%s' % (name, url), repr(cachedData))
 
         rawURLs = self.win.getProperty('%s|urls' % name)
