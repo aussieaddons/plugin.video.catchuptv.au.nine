@@ -36,11 +36,15 @@ def fetch_bc_url(url, headers={}):
             raise e
 
 
-def list_series():
+def list_series(genre=None):
     """
     Create and return list of series objects
     """
-    data = cache.getData(name=ADDON_ID, url=config.TVSERIES_URL)
+    if genre:
+        url = config.TVSERIESQUERY_URL.format(genre)
+    else:
+        url = config.TVSERIES_URL
+    data = cache.getData(name=ADDON_ID, url=url)
 
     if isinstance(data, list):
         return data
@@ -62,7 +66,7 @@ def list_series():
                 s.desc = season.get('description')
                 listing.append(s)
 
-    cache.getData(name=ADDON_ID, url=config.TVSERIES_URL, data=listing)
+    cache.getData(name=ADDON_ID, url=url, data=listing)
     return listing
 
 
