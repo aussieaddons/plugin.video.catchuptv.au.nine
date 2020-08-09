@@ -58,12 +58,17 @@ def make_episodes_list(url):
             li.setProperty('IsPlayable', 'true')
             if e.drm is True:
                 li.setProperty('inputstreamaddon', 'inputstream.adaptive')
+                li.setProperty('inputstream.adaptive.manifest_type', 'mpd')
             li.setInfo('video', {'plot': e.desc,
                                  'plotoutline': e.desc,
                                  'duration': e.duration,
                                  'date': e.get_airdate()})
             listing.append((url, li, is_folder))
 
+        xbmcplugin.addSortMethod(
+            _handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+        xbmcplugin.addSortMethod(
+            _handle, xbmcplugin.SORT_METHOD_EPISODE)
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
         xbmcplugin.endOfDirectory(_handle)
     except Exception:
