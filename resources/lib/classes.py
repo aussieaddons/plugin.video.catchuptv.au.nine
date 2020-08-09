@@ -56,6 +56,7 @@ class series(object):
         self.season_slug = None
         self.title = None
         self.genre = None
+        self.genre_slug = None
         self.desc = None
 
     def __repr__(self):

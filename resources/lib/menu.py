@@ -32,7 +32,7 @@ def list_categories():
                                   thumbnailImage=g.thumb, offscreen=True)
             li.setArt({'fanart': g.fanart})
             url_string = '{0}?action=listcategories&category=genre&genre={1}'
-            url = url_string.format(_url, urllib.quote_plus(g.title))
+            url = url_string.format(_url, urllib.quote_plus(g.genre_slug))
             is_folder = True
             listing.append((url, li, is_folder))
         li = xbmcgui.ListItem('Settings', offscreen=True)
@@ -103,16 +103,12 @@ def make_series_list(url):
     try:
         params = dict(urlparse.parse_qsl(url))
         series_list = comm.list_series()
-        filtered = []
         if 'genre' in params:
-            for s in series_list:
-                if s.genre == urllib.unquote_plus(params['genre']):
-                    filtered.append(s)
-        else:
-            filtered = series_list
-
+            series_slug_list = comm.list_series_by_genre(params['genre'])
+            series_list = [s for s in series_list
+                            if s.series_slug in series_slug_list]
         listing = []
-        for s in filtered:
+        for s in series_list:
             li = xbmcgui.ListItem(s.title, iconImage=s.thumb,
                                   thumbnailImage=s.thumb, offscreen=True)
             li.setArt({'fanart': s.fanart})
