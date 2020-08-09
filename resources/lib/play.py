@@ -11,6 +11,8 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 
+from upnext import upnext_signal
+
 from aussieaddonscommon import utils
 from aussieaddonscommon import session as custom_session
 
@@ -138,8 +140,65 @@ def play_video(params):
 
         play_item.setProperty('isPlayable', 'true')
         play_item.setIsFolder(False)
+        #TODO: add more info
+        play_item.setInfo('video', {'mediatype': 'episode',
+                                    'tvshowtitle': params['series_title'],
+                                    'title': params['episode_name'],
+                                    'plot': params['desc'],
+                                    'plotoutline': params['desc'],
+                                    'duration': params['duration'],
+                                    'aired': params['airdate'],
+                                    'season': params['season_no'],
+                                    'episode': params['episode_no']})
 
         xbmcplugin.setResolvedUrl(_handle, True, play_item)
+
+        if params['action'] != 'listepisodes':
+            return
+        next = comm.get_next_episode(params)
+        if not next:
+            return
+
+        next_info = dict(
+            current_episode=dict(
+                episodeid=params['id'],
+                tvshowid=params['series_slug'],
+                title=params['episode_name'],
+                art={
+                    'thumb': params['thumb'],
+                    'tvshow.fanart': params['fanart'],
+                },
+                season=params['season_no'],
+                episode=params['episode_no'],
+                showtitle=params['series_title'],
+                plot=params['desc'],
+                playcount=0,
+                rating=None,
+                firstaired=params['airdate'],
+                runtime=params['duration'],
+            ),
+            next_episode=dict(
+                episodeid=next.id,
+                tvshowid=next.series_slug,
+                title=next.episode_name,
+                art={
+                    'thumb': next.thumb,
+                    'tvshow.fanart': next.fanart,
+                },
+                season=next.season_no,
+                episode=next.episode_no,
+                showtitle=next.series_title,
+                plot=next.desc,
+                playcount=0,
+                rating=None,
+                firstaired=next.airdate,
+                runtime=next.duration,
+            ),
+            play_url='{0}?action=listepisodes{1}'.format(
+                        _url, next.make_kodi_url())
+        )
+
+        upnext_signal(comm.ADDON_ID, next_info)
 
     except Exception:
         utils.handle_error('Unable to play video')

@@ -62,7 +62,7 @@ def make_episodes_list(url):
             li.setInfo('video', {'plot': e.desc,
                                  'plotoutline': e.desc,
                                  'duration': e.duration,
-                                 'date': e.get_airdate()})
+                                 'date': e.airdate})
             listing.append((url, li, is_folder))
 
         xbmcplugin.addSortMethod(

@@ -92,6 +92,10 @@ class episode(object):
                 setattr(self, attr, val)
             return
 
+        self.series_slug = None
+        self.series_title = None
+        self.season_slug = None
+        self.season_no = None
         self.fanart = None
         self.thumb = None
         self.title = None
@@ -110,12 +114,6 @@ class episode(object):
 
     def get_title(self):
         return 'Ep {0} - {1}'.format(self.episode_no, self.episode_name)
-
-    def get_airdate(self):
-        if self.airdate:
-            return '{0}.{1}.{2}'.format(self.airdate[8:10],
-                                        self.airdate[5:7],
-                                        self.airdate[0:4])
 
     def make_kodi_url(self):
         d = vars(self)

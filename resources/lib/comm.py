@@ -117,7 +117,8 @@ def list_episodes(params):
         if not episode.get('episodeNumber'):
             return
         # make sure season numbers match, some shows return all seasons.
-        if episode['partOfSeason'].get('slug') != params['season_slug']:
+        if ('partOfSeason' in episode and
+            episode['partOfSeason'].get('slug') != params['season_slug']):
             return
 
         e = classes.episode()
@@ -128,26 +129,52 @@ def list_episodes(params):
         e.title = e.get_title()
         e.desc = utils.ensure_ascii(episode.get('description'))
         e.duration = episode['video'].get('duration')//1000
-        e.airdate = episode.get('airDate')
+        airdate = episode.get('airDate')
+        if airdate:
+            e.airdate = '{0}.{1}.{2}'.format(airdate[8:10],
+                                             airdate[5:7],
+                                             airdate[0:4])
         e.id = episode['video'].get('referenceId')
         e.drm = episode['video'].get('drm')
+        e.series_slug = params['series_slug']
+        e.series_title = data['tvSeries']['name']
+        e.season_slug = params['season_slug']
+        e.season_no = str(data['season']['seasonNumber'])
         return e
 
-    url = config.EPISODEQUERY_URL.format(
-        params['series_slug'], params['season_slug']+'/episodes')
+    url = config.EPISODEQUERY_URL.format(params['series_slug'],
+        params['season_slug'], params.get('episode_slug',''))
     data = cache.getData(name=ADDON_ID, url=url)
 
     if isinstance(data, list):
         return data
 
+    episodes = []
+    if 'episodes' in data:
+        episodes = data['episodes'].get('items')
+    elif 'episode' in data:
+        episodes = [data['episode']]
+
     listing = []
-    for episode in data['episodes'].get('items'):
+    for episode in episodes:
         e = get_metadata(episode)
         if e:
             listing.append(e)
 
     cache.getData(name=ADDON_ID, url=url, data=listing)
     return listing
+
+
+def get_next_episode(episode):
+    if not episode:
+        return None
+
+    params = dict(series_slug=episode['series_slug'],
+                  season_slug=episode['season_slug'],
+                  episode_slug='episode-%s' % str(int(episode['episode_no'])+1))
+
+    episodes = list_episodes(params)
+    return episodes[0] if episodes else None
 
 
 def list_live(params):
