@@ -36,15 +36,11 @@ def fetch_bc_url(url, headers={}):
             raise e
 
 
-def list_series(genre=None):
+def list_series():
     """
     Create and return list of series objects
     """
-    if genre:
-        url = config.TVSERIESQUERY_URL.format(genre)
-    else:
-        url = config.TVSERIES_URL
-    data = cache.getData(name=ADDON_ID, url=url)
+    data = cache.getData(name=ADDON_ID, url=config.TVSERIES_URL)
 
     if isinstance(data, list):
         return data
@@ -62,13 +58,30 @@ def list_series(genre=None):
                 s.fanart = show['image']['sizes'].get('w1280')
                 s.thumb = season['image']['sizes'].get('w480')
                 s.genre = season['genre'].get('name')
+                s.genre_slug = season['genre'].get('slug')
                 s.title = s.get_title()
                 s.desc = season.get('description')
                 listing.append(s)
 
-    cache.getData(name=ADDON_ID, url=url, data=listing)
+    cache.getData(name=ADDON_ID, url=config.TVSERIES_URL, data=listing)
     return listing
 
+
+def list_series_by_genre(genre):
+    """
+    Create and return list of series objects
+    """
+    url = config.TVSERIESQUERY_URL.format(genre)
+    data = cache.getData(name=ADDON_ID, url=url)
+
+    if isinstance(data, list):
+        return data
+
+    data = data.get('tvSeries', None)
+    listing = [s['slug'] for s in data] if data else []
+
+    cache.getData(name=ADDON_ID, url=url, data=listing)
+    return listing
 
 def list_genres():
     """
