@@ -4,30 +4,18 @@ import json
 import requests
 
 from aussieaddonscommon.exceptions import AussieAddonsException
-from aussieaddonscommon import session
 from aussieaddonscommon import utils
 
 
-def fetch_url(url, headers={}):
-    """
-    Use custom session to grab URL and return the text
-    """
-    with session.Session(force_tlsv1=True) as sess:
-        res = sess.get(url, headers=headers)
-        try:
-            data = json.loads(res.text)
-            return data
-        except ValueError as e:
-            utils.log('Error parsing JSON, response is {0}'.format(res.text))
-            raise e
-
+cache = classes.CacheObj()
+ADDON_ID = 'plugin.video.catchuptv.au.nine'
 
 def fetch_bc_url(url, headers={}):
     """
     Use fetch_url and catch Brightcove API errors
     """
     try:
-        data = fetch_url(url=url, headers=headers)
+        data = cache.getData(url=url, headers=headers, noCache=True)
         return data
     except requests.exceptions.HTTPError as e:
         utils.log(e.response.text)
@@ -52,7 +40,11 @@ def list_series():
     """
     Create and return list of series objects
     """
-    data = fetch_url(config.TVSERIES_URL)
+    data = cache.getData(name=ADDON_ID, url=config.TVSERIES_URL)
+
+    if isinstance(data, list):
+        return data
+
     listing = []
     for show in data['items']:
         if show.get('containsSeason'):
@@ -67,7 +59,10 @@ def list_series():
                 s.thumb = season['image']['sizes'].get('w480')
                 s.genre = season['genre'].get('name')
                 s.title = s.get_title()
+                s.desc = season.get('description')
                 listing.append(s)
+
+    cache.getData(name=ADDON_ID, url=config.TVSERIES_URL, data=listing)
     return listing
 
 
@@ -75,7 +70,11 @@ def list_genres():
     """
     Create and return list of genre objects
     """
-    data = fetch_url(config.GENRES_URL)
+    data = cache.getData(name=ADDON_ID, url=config.GENRES_URL)
+
+    if isinstance(data, list):
+        return data
+
     listing = []
     for genre in data['items']:
         g = classes.genre()
@@ -84,6 +83,8 @@ def list_genres():
         g.genre_slug = genre.get('slug')
         g.title = genre.get('name')
         listing.append(g)
+
+    cache.getData(name=ADDON_ID, url=config.GENRES_URL, data=listing)
     return listing
 
 
@@ -115,16 +116,20 @@ def list_episodes(params):
         e.drm = episode['video'].get('drm')
         return e
 
-    listing = []
-
     url = config.EPISODEQUERY_URL.format(
         params['series_slug'], params['season_slug']+'/episodes')
-    data = fetch_url(url)
+    data = cache.getData(name=ADDON_ID, url=url)
+
+    if isinstance(data, list):
+        return data
+
+    listing = []
     for episode in data['episodes'].get('items'):
         e = get_metadata(episode)
         if e:
             listing.append(e)
 
+    cache.getData(name=ADDON_ID, url=url, data=listing)
     return listing
 
 
@@ -132,7 +137,11 @@ def list_live(params):
     """
     Create and return list of channel objects
     """
-    data = fetch_url(config.LIVETV_URL)
+    data = cache.getData(name=ADDON_ID, url=config.LIVETV_URL)
+
+    if isinstance(data, list):
+        return data
+
     listing = []
     for channel in data['channels']:
         c = classes.channel()
@@ -152,6 +161,8 @@ def list_live(params):
         c.episode_name = channel.get('name')
         c.id = channel.get('referenceId')
         listing.append(c)
+
+    cache.getData(name=ADDON_ID, url=config.LIVETV_URL, data=listing)
     return listing
 
 
