@@ -211,7 +211,7 @@ class CacheObj():
 
         if len(urls) > CacheObj.maxEntries:
             oldUrl = urls.popleft()
-            self.win.setProperty('%s|%s' % (name, oldUrl), '')
+            self.win.clearProperty('%s|%s' % (name, oldUrl))
 
         self.win.setProperty('%s|urls' % name, repr(urls))
 
