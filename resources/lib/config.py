@@ -8,7 +8,7 @@ GIST_API_URL = 'https://api.github.com/gists'
 CATEGORIES = ['Live TV', 'All Shows']
 GENRES_URL = "https://tv-api.9now.com.au/v1/genres?device=android&take=99999"
 TVSERIES_URL = "https://tv-api.9now.com.au/v1/tv-series?device=android&take=99999"
-TVSERIESQUERY_URL = "https://tv-api.9now.com.au/v1/pages/genres/{0}?device=android&take=99999"
+TVSERIESQUERY_URL = "https://tv-api.9now.com.au/v1/pages/genres/{0}?device=web&take=99999"
 EPISODEQUERY_URL = "https://tv-api.9now.com.au/v1/pages/tv-series/{0}/seasons/{1}?device=android"
 LIVETV_URL = "https://tv-api.9now.com.au/v1/pages/livestreams?device=android"
 
