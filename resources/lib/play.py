@@ -86,6 +86,7 @@ def play_video(params):
             url = widevine['url']
             sub_url = widevine['sub_url']
             play_item = xbmcgui.ListItem(path=url)
+            play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
             play_item.setProperty('inputstream.adaptive.manifest_type',
                                   'mpd')
             play_item.setProperty('inputstream.adaptive.license_type',
@@ -134,6 +135,9 @@ def play_video(params):
 
             except Exception as e:
                 utils.log('Unable to add subtitles: {0}'.format(e))
+
+        play_item.setProperty('isPlayable', 'true')
+        play_item.setIsFolder(False)
 
         xbmcplugin.setResolvedUrl(_handle, True, play_item)
 
