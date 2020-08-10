@@ -5,6 +5,7 @@ import json
 import datetime
 import xbmcgui
 
+from threading import Thread
 from collections import deque
 
 from aussieaddonscommon import session
@@ -169,6 +170,7 @@ class CacheObj():
 
     maxEntries = 50
     maxTTL = datetime.timedelta(seconds=(60*60*12))
+    minTTL = datetime.timedelta(seconds=(60*5))
 
     def __init__(self):
         self.win = xbmcgui.Window(10000)
@@ -179,7 +181,9 @@ class CacheObj():
         now = datetime.datetime.now()
 
         if noCache or not name:
-            return CacheObj.fetch_url(url=url, headers=headers)
+            data = CacheObj.fetch_url(url=url, headers=headers)
+        if not name:
+            return data
 
         if not data:
             rawData = self.win.getProperty('%s|%s' % (name, url))
@@ -188,13 +192,19 @@ class CacheObj():
                     cachedData = eval(rawData)
                     if not isinstance(expiry, datetime.timedelta):
                         expiry = CacheObj.maxTTL
+                    if cachedData[0] + CacheObj.minTTL < now:
+                        bgFetch = Thread(target=self.getData,
+                                         kwargs=dict(url=url,
+                                                     headers=headers,
+                                                     name=name,
+                                                     noCache=True))
+                        bgFetch.start()
                     if cachedData[0] + expiry > now:
                         return cachedData[1]
                 except Exception as e:
                     utils.log('Error with eval of cached data: {0}'.format(e))
                     #utils.log(rawData)
 
-        if not data:
             data = CacheObj.fetch_url(url=url, headers=headers)
 
         cachedData = (now, data)
