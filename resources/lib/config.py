@@ -10,7 +10,7 @@ GENRES_URL = "https://tv-api.9now.com.au/v1/genres?device=android&take=99999"
 TVSERIES_URL = "https://tv-api.9now.com.au/v1/tv-series?device=android&take=99999"
 TVSERIESQUERY_URL = "https://tv-api.9now.com.au/v1/pages/genres/{0}?device=web&take=99999"
 EPISODEQUERY_URL = "https://tv-api.9now.com.au/v1/pages/tv-series/{0}/seasons/{1}/episodes/{2}?device=android"
-LIVETV_URL = "https://tv-api.9now.com.au/v1/pages/livestreams?device=android"
+LIVETV_URL = "https://tv-api.9now.com.au/v1/pages/livestreams?device=web"
 
 BRIGHTCOVE_URL = "http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId={0}"
 BRIGHTCOVE_DRM_URL = "https://edge.api.brightcove.com/playback/v1/accounts/{0}/videos/ref:{1}"

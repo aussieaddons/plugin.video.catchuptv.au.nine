@@ -142,14 +142,14 @@ def play_video(params):
         play_item.setIsFolder(False)
         #TODO: add more info
         play_item.setInfo('video', {'mediatype': 'episode',
-                                    'tvshowtitle': params['series_title'],
+                                    'tvshowtitle': params.get('series_title',''),
                                     'title': params['episode_name'],
                                     'plot': params['desc'],
                                     'plotoutline': params['desc'],
-                                    'duration': params['duration'],
-                                    'aired': params['airdate'],
-                                    'season': params['season_no'],
-                                    'episode': params['episode_no']})
+                                    'duration': params.get('duration',''),
+                                    'aired': params.get('airdate',''),
+                                    'season': params.get('season_no',''),
+                                    'episode': params.get('episode_no','')})
 
         xbmcplugin.setResolvedUrl(_handle, True, play_item)
 

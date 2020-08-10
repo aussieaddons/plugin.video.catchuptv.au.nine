@@ -101,6 +101,7 @@ class episode(object):
         self.thumb = None
         self.title = None
         self.desc = None
+        self.duration = None
         self.airdate = None
         self.episode_no = None
         self.episode_name = None
