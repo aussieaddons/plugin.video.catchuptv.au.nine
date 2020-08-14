@@ -147,6 +147,9 @@ def list_episodes(params):
     data = cache.getData(name=ADDON_ID, url=url)
 
     if isinstance(data, list):
+        if params.get('episode'):
+            return [e for e in data
+                        if e.episode_no == str(params.get('episode'))]
         return data
 
     episodes = []
@@ -162,6 +165,9 @@ def list_episodes(params):
             listing.append(e)
 
     cache.getData(name=ADDON_ID, url=url, data=listing)
+    if params.get('episode'):
+        return [e for e in listing
+                    if e.episode_no == str(params.get('episode'))]
     return listing
 
 
@@ -171,7 +177,8 @@ def get_next_episode(episode):
 
     params = dict(series_slug=episode['series_slug'],
                   season_slug=episode['season_slug'],
-                  episode_slug='episode-%s' % str(int(episode['episode_no'])+1))
+                  #episode_slug='episode-%s' % str(int(episode['episode_no'])+1),
+                  episode=int(episode['episode_no'])+1)
 
     episodes = list_episodes(params)
     return episodes[0] if episodes else None
