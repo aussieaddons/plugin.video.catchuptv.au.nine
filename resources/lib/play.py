@@ -1,17 +1,16 @@
+import csv
+import os
+import sys
 import comm
 import config
-import csv
 import drmhelper
-import os
 import StringIO
-import sys
+
 import urlparse
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
-
-from upnext import upnext_signal
 
 from aussieaddonscommon import utils
 from aussieaddonscommon import session as custom_session
@@ -78,7 +77,7 @@ def play_video(params):
     """
     try:
         json_url = config.BRIGHTCOVE_DRM_URL.format(
-                config.BRIGHTCOVE_ACCOUNT, params['id'])
+            config.BRIGHTCOVE_ACCOUNT, params['id'])
 
         if params['drm'] == 'True':
             if xbmcaddon.Addon().getSetting('ignore_drm') == 'false':
@@ -95,8 +94,8 @@ def play_video(params):
                                   'com.widevine.alpha')
             play_item.setProperty(
                 'inputstream.adaptive.license_key',
-                widevine['key']+('|Content-Type=application%2F'
-                                 'x-www-form-urlencoded|A{SSM}|'))
+                widevine['key'] + ('|Content-Type=application%2F'
+                                   'x-www-form-urlencoded|A{SSM}|'))
         else:
             if params['action'] == 'listchannels':
                 qual = int(xbmcaddon.Addon().getSetting('LIVEQUALITY'))
@@ -140,26 +139,34 @@ def play_video(params):
 
         play_item.setProperty('isPlayable', 'true')
         play_item.setIsFolder(False)
-        #TODO: add more info
-        play_item.setInfo('video', {'mediatype': 'episode',
-                                    'tvshowtitle': params.get('series_title',''),
-                                    'title': params['episode_name'],
-                                    'plot': params['desc'],
-                                    'plotoutline': params['desc'],
-                                    'duration': params.get('duration',''),
-                                    'aired': params.get('airdate',''),
-                                    'season': params.get('season_no',''),
-                                    'episode': params.get('episode_no','')})
+        # TODO: add more info
+        play_item.setInfo('video', {
+            'mediatype': 'episode',
+            'tvshowtitle': params.get('series_title', ''),
+            'title': params['episode_name'],
+            'plot': params['desc'],
+            'plotoutline': params['desc'],
+            'duration': params.get('duration', ''),
+            'aired': params.get('airdate', ''),
+            'season': params.get('season_no', ''),
+            'episode': params.get('episode_no', '')
+        })
 
         xbmcplugin.setResolvedUrl(_handle, True, play_item)
 
         if params['action'] != 'listepisodes':
             return
-        next = comm.get_next_episode(params)
-        if not next:
+        next_item = comm.get_next_episode(params)
+        if not next_item:
             return
 
-        next_info = dict(
+        try:
+            import upnext
+        except Exception as e:
+            utils.log('UpNext addon not installed: %s' % e)
+            return
+
+        upnext_info = dict(
             current_episode=dict(
                 episodeid=params['id'],
                 tvshowid=params['series_slug'],
@@ -178,27 +185,27 @@ def play_video(params):
                 runtime=params['duration'],
             ),
             next_episode=dict(
-                episodeid=next.id,
-                tvshowid=next.series_slug,
-                title=next.episode_name,
+                episodeid=next_item.id,
+                tvshowid=next_item.series_slug,
+                title=next_item.episode_name,
                 art={
-                    'thumb': next.thumb,
-                    'tvshow.fanart': next.fanart,
+                    'thumb': next_item.thumb,
+                    'tvshow.fanart': next_item.fanart,
                 },
-                season=next.season_no,
-                episode=next.episode_no,
-                showtitle=next.series_title,
-                plot=next.desc,
+                season=next_item.season_no,
+                episode=next_item.episode_no,
+                showtitle=next_item.series_title,
+                plot=next_item.desc,
                 playcount=0,
                 rating=None,
-                firstaired=next.airdate,
-                runtime=next.duration,
+                firstaired=next_item.airdate,
+                runtime=next_item.duration,
             ),
             play_url='{0}?action=listepisodes{1}'.format(
-                        _url, next.make_kodi_url())
+                _url, next_item.make_kodi_url())
         )
 
-        upnext_signal(comm.ADDON_ID, next_info)
+        upnext.send_signal(xbmcaddon.Addon().getAddonInfo('id'), upnext_info)
 
     except Exception:
         utils.handle_error('Unable to play video')
