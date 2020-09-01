@@ -224,7 +224,8 @@ def get_subtitles(text_tracks):
     for text_track in text_tracks:
         try:
             sub_url = text_track.get('src')
-            if sub_url:
+            label = text_track.get('label')
+            if sub_url and label != 'thumbnails':
                 return sub_url
         except AttributeError:
             pass
