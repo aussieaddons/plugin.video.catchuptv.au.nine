@@ -2,7 +2,7 @@ import xbmc
 from json import dumps, loads
 from base64 import b64encode
 
-def upnext_signal(sender, next_info):
+def send_signal(sender, next_info):
     """Send a signal to Kodi using JSON RPC"""
     data = [to_unicode(b64encode(dumps(next_info).encode()))]
     notify(sender=sender + '.SIGNAL', message='upnext_data', data=data)
