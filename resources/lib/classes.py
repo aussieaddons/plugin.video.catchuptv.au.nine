@@ -5,6 +5,8 @@ import json
 import datetime
 import xbmcgui
 
+from config import USER_AGENT
+
 from threading import Thread
 from collections import deque
 
@@ -180,6 +182,9 @@ class CacheObj():
                 name=None, noCache=False, expiry=None, data=None):
 
         now = datetime.datetime.now()
+
+        if not headers or not headers.get('User-Agent'):
+            headers['User-Agent'] = USER_AGENT
 
         if noCache or not name:
             data = CacheObj.fetch_url(url=url, headers=headers)

@@ -153,10 +153,12 @@ def list_episodes(params):
         return data
 
     episodes = []
-    if 'episodes' in data:
-        episodes = data['episodes'].get('items')
-    elif 'episode' in data:
+    if 'episode' in data:
         episodes = [data['episode']]
+    elif 'episodes' in data:
+        episodes = data['episodes'].get('items')
+    elif 'items' in data:
+        episodes = data['items']
 
     listing = []
     for episode in episodes:
