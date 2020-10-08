@@ -138,7 +138,8 @@ def play_video(params):
                 utils.log('Unable to add subtitles: {0}'.format(e))
 
         play_item.setProperty('isPlayable', 'true')
-        play_item.setIsFolder(False)
+        if hasattr(play_item, 'setIsFolder'):
+            play_item.setIsFolder(False)
         # TODO: add more info
         play_item.setInfo('video', {
             'mediatype': 'episode',
