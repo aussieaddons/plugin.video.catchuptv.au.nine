@@ -135,6 +135,7 @@ def make_series_list(url):
             li.setArt({'fanart': s.fanart})
             url = '{0}?action=listseries{1}'.format(_url, s.make_kodi_url())
             is_folder = True
+            li.setInfo('video', {'plot': s.desc, 'plotoutline': s.desc})
             listing.append((url, li, is_folder))
 
         xbmcplugin.addSortMethod(
