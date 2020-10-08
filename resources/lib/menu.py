@@ -12,6 +12,15 @@ _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 
+def create_listitem(*args, **kwargs):
+    ver = utils.get_kodi_major_version()
+    if ver >= 18:
+        kwargs['offscreen'] = True
+
+    listitem = xbmcgui.ListItem(*args, **kwargs)
+    return listitem
+
+
 def list_categories():
     """
     Make initial list
@@ -20,7 +29,7 @@ def list_categories():
         listing = []
         categories = config.CATEGORIES
         for category in categories:
-            li = xbmcgui.ListItem(category, offscreen=True)
+            li = create_listitem(category)
             url_string = '{0}?action=listcategories&category={1}'
             url = url_string.format(_url, category)
             is_folder = True
@@ -28,14 +37,17 @@ def list_categories():
 
         genres = comm.list_genres()
         for g in genres:
-            li = xbmcgui.ListItem(g.title, iconImage=g.thumb,
-                                  thumbnailImage=g.thumb, offscreen=True)
+            li = create_listitem(
+                g.title,
+                iconImage=g.thumb,
+                thumbnailImage=g.thumb
+            )
             li.setArt({'fanart': g.fanart})
             url_string = '{0}?action=listcategories&category=genre&genre={1}'
             url = url_string.format(_url, urllib.quote_plus(g.genre_slug))
             is_folder = True
             listing.append((url, li, is_folder))
-        li = xbmcgui.ListItem('Settings', offscreen=True)
+        li = create_listitem('Settings')
         listing.append(('{0}?action=settings'.format(_url), li, is_folder))
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
         xbmcplugin.endOfDirectory(_handle)
@@ -50,8 +62,11 @@ def make_episodes_list(url):
         episodes = comm.list_episodes(params)
         listing = []
         for e in episodes:
-            li = xbmcgui.ListItem(e.title, iconImage=e.thumb,
-                                  thumbnailImage=e.thumb, offscreen=True)
+            li = create_listitem(
+                e.title,
+                iconImage=e.thumb,
+                thumbnailImage=e.thumb
+            )
             li.setArt({'fanart': e.fanart})
             url = '{0}?action=listepisodes{1}'.format(_url, e.make_kodi_url())
             is_folder = False
@@ -82,8 +97,11 @@ def make_live_list(url):
         channels = comm.list_live(params)
         listing = []
         for c in channels:
-            li = xbmcgui.ListItem(c.title, iconImage=c.thumb,
-                                  thumbnailImage=c.thumb, offscreen=True)
+            li = create_listitem(
+                c.title,
+                iconImage=c.thumb,
+                thumbnailImage=c.thumb
+            )
             li.setArt({'fanart': c.fanart})
             url = '{0}?action=listchannels{1}'.format(_url, c.make_kodi_url())
             is_folder = False
@@ -109,8 +127,11 @@ def make_series_list(url):
                             if s.series_slug in series_slug_list]
         listing = []
         for s in series_list:
-            li = xbmcgui.ListItem(s.title, iconImage=s.thumb,
-                                  thumbnailImage=s.thumb, offscreen=True)
+            li = create_listitem(
+                s.title,
+                iconImage=s.thumb,
+                thumbnailImage=s.thumb
+            )
             li.setArt({'fanart': s.fanart})
             url = '{0}?action=listseries{1}'.format(_url, s.make_kodi_url())
             is_folder = True
