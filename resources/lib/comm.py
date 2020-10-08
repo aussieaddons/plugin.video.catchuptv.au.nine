@@ -4,30 +4,18 @@ import json
 import requests
 
 from aussieaddonscommon.exceptions import AussieAddonsException
-from aussieaddonscommon import session
 from aussieaddonscommon import utils
 
 
-def fetch_url(url, headers={}):
-    """
-    Use custom session to grab URL and return the text
-    """
-    with session.Session(force_tlsv1=True) as sess:
-        res = sess.get(url, headers=headers)
-        try:
-            data = json.loads(res.text)
-            return data
-        except ValueError as e:
-            utils.log('Error parsing JSON, response is {0}'.format(res.text))
-            raise e
-
+cache = classes.CacheObj()
+ADDON_ID = 'plugin.video.catchuptv.au.nine'
 
 def fetch_bc_url(url, headers={}):
     """
     Use fetch_url and catch Brightcove API errors
     """
     try:
-        data = fetch_url(url=url, headers=headers)
+        data = cache.getData(url=url, headers=headers, noCache=True)
         return data
     except requests.exceptions.HTTPError as e:
         utils.log(e.response.text)
@@ -52,7 +40,11 @@ def list_series():
     """
     Create and return list of series objects
     """
-    data = fetch_url(config.TVSERIES_URL)
+    data = cache.getData(name=ADDON_ID, url=config.TVSERIES_URL)
+
+    if isinstance(data, list):
+        return data
+
     listing = []
     for show in data['items']:
         if show.get('containsSeason'):
@@ -66,16 +58,40 @@ def list_series():
                 s.fanart = show['image']['sizes'].get('w1280')
                 s.thumb = season['image']['sizes'].get('w480')
                 s.genre = season['genre'].get('name')
+                s.genre_slug = season['genre'].get('slug')
                 s.title = s.get_title()
+                s.desc = season.get('description')
                 listing.append(s)
+
+    cache.getData(name=ADDON_ID, url=config.TVSERIES_URL, data=listing)
     return listing
 
+
+def list_series_by_genre(genre):
+    """
+    Create and return list of series objects
+    """
+    url = config.TVSERIESQUERY_URL.format(genre)
+    data = cache.getData(name=ADDON_ID, url=url)
+
+    if isinstance(data, list):
+        return data
+
+    data = data.get('tvSeries', None)
+    listing = [s['slug'] for s in data] if data else []
+
+    cache.getData(name=ADDON_ID, url=url, data=listing)
+    return listing
 
 def list_genres():
     """
     Create and return list of genre objects
     """
-    data = fetch_url(config.GENRES_URL)
+    data = cache.getData(name=ADDON_ID, url=config.GENRES_URL)
+
+    if isinstance(data, list):
+        return data
+
     listing = []
     for genre in data['items']:
         g = classes.genre()
@@ -84,6 +100,8 @@ def list_genres():
         g.genre_slug = genre.get('slug')
         g.title = genre.get('name')
         listing.append(g)
+
+    cache.getData(name=ADDON_ID, url=config.GENRES_URL, data=listing)
     return listing
 
 
@@ -99,7 +117,8 @@ def list_episodes(params):
         if not episode.get('episodeNumber'):
             return
         # make sure season numbers match, some shows return all seasons.
-        if episode['partOfSeason'].get('slug') != params['season_slug']:
+        if ('partOfSeason' in episode and
+            episode['partOfSeason'].get('slug') != params['season_slug']):
             return
 
         e = classes.episode()
@@ -110,29 +129,72 @@ def list_episodes(params):
         e.title = e.get_title()
         e.desc = utils.ensure_ascii(episode.get('description'))
         e.duration = episode['video'].get('duration')//1000
-        e.airdate = episode.get('airDate')
+        airdate = episode.get('airDate')
+        if airdate:
+            e.airdate = '{0}.{1}.{2}'.format(airdate[8:10],
+                                             airdate[5:7],
+                                             airdate[0:4])
         e.id = episode['video'].get('referenceId')
         e.drm = episode['video'].get('drm')
+        e.series_slug = params['series_slug']
+        e.series_title = data['tvSeries']['name']
+        e.season_slug = params['season_slug']
+        e.season_no = str(data['season']['seasonNumber'])
         return e
 
-    listing = []
+    url = config.EPISODEQUERY_URL.format(params['series_slug'],
+        params['season_slug'], params.get('episode_slug',''))
+    data = cache.getData(name=ADDON_ID, url=url)
 
-    url = config.EPISODEQUERY_URL.format(
-        params['series_slug'], params['season_slug']+'/episodes')
-    data = fetch_url(url)
-    for episode in data['episodes'].get('items'):
+    if isinstance(data, list):
+        if params.get('episode'):
+            return [e for e in data
+                        if e.episode_no == str(params.get('episode'))]
+        return data
+
+    episodes = []
+    if 'episode' in data:
+        episodes = [data['episode']]
+    elif 'episodes' in data:
+        episodes = data['episodes'].get('items')
+    elif 'items' in data:
+        episodes = data['items']
+
+    listing = []
+    for episode in episodes:
         e = get_metadata(episode)
         if e:
             listing.append(e)
 
+    cache.getData(name=ADDON_ID, url=url, data=listing)
+    if params.get('episode'):
+        return [e for e in listing
+                    if e.episode_no == str(params.get('episode'))]
     return listing
+
+
+def get_next_episode(episode):
+    if not episode:
+        return None
+
+    params = dict(series_slug=episode['series_slug'],
+                  season_slug=episode['season_slug'],
+                  #episode_slug='episode-%s' % str(int(episode['episode_no'])+1),
+                  episode=int(episode['episode_no'])+1)
+
+    episodes = list_episodes(params)
+    return episodes[0] if episodes else None
 
 
 def list_live(params):
     """
     Create and return list of channel objects
     """
-    data = fetch_url(config.LIVETV_URL)
+    data = cache.getData(name=ADDON_ID, url=config.LIVETV_URL)
+
+    if isinstance(data, list):
+        return data
+
     listing = []
     for channel in data['channels']:
         c = classes.channel()
@@ -152,6 +214,8 @@ def list_live(params):
         c.episode_name = channel.get('name')
         c.id = channel.get('referenceId')
         listing.append(c)
+
+    cache.getData(name=ADDON_ID, url=config.LIVETV_URL, data=listing)
     return listing
 
 
@@ -160,7 +224,8 @@ def get_subtitles(text_tracks):
     for text_track in text_tracks:
         try:
             sub_url = text_track.get('src')
-            if sub_url:
+            label = text_track.get('label')
+            if sub_url and label != 'thumbnails':
                 return sub_url
         except AttributeError:
             pass

@@ -11,6 +11,7 @@
     <provides>video</provides>
   </extension>
   <extension library="default.py" point="xbmc.addon.metadata">
+    <reuselanguageinvoker>true</reuselanguageinvoker>
     <summary>9now add-on</summary>
     <description>Watch live TV and catch up on all videos offered by the 9now service</description>
     <provides>video</provides>
