@@ -144,9 +144,9 @@ def play_video(params):
         play_item.setInfo('video', {
             'mediatype': 'episode',
             'tvshowtitle': params.get('series_title', ''),
-            'title': params['episode_name'],
-            'plot': params['desc'],
-            'plotoutline': params['desc'],
+            'title': params.get('episode_name', ''),
+            'plot': params.get('desc', ''),
+            'plotoutline': params.get('desc', ''),
             'duration': params.get('duration', ''),
             'aired': params.get('airdate', ''),
             'season': params.get('season_no', ''),
