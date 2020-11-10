@@ -236,7 +236,7 @@ class CacheObj():
         """
         Use custom session to grab URL and return the text
         """
-        with session.Session(force_tlsv1=True) as sess:
+        with session.Session(force_tlsv1=False) as sess:
             res = sess.get(url, headers=headers)
             try:
                 data = json.loads(res.text)
