@@ -1,16 +1,12 @@
 import xbmcgui
 import xbmcplugin
-import comm
-import config
 import sys
-import urlparse
 import urllib
 
 from aussieaddonscommon import utils
 
-_url = sys.argv[0]
-_handle = int(sys.argv[1])
-
+import resources.lib.comm as comm
+import resources.lib.config as config
 
 def create_listitem(*args, **kwargs):
     ver = utils.get_kodi_major_version()
@@ -26,6 +22,8 @@ def list_categories():
     Make initial list
     """
     try:
+        _url = sys.argv[0]
+        _handle = int(sys.argv[1])
         listing = []
         categories = config.CATEGORIES
         for category in categories:
@@ -37,12 +35,10 @@ def list_categories():
 
         genres = comm.list_genres()
         for g in genres:
-            li = create_listitem(
-                g.title,
-                iconImage=g.thumb,
-                thumbnailImage=g.thumb
-            )
-            li.setArt({'fanart': g.fanart})
+            li = create_listitem(g.title)
+            li.setArt({'fanart': g.fanart,
+                       'icon': g.thumb,
+                       'thumb': g.thumb})
             url_string = '{0}?action=listcategories&category=genre&genre={1}'
             url = url_string.format(_url, urllib.quote_plus(g.genre_slug))
             is_folder = True
@@ -52,22 +48,22 @@ def list_categories():
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
         xbmcplugin.endOfDirectory(_handle)
     except Exception:
+        raise
         utils.handle_error('Unable to list categories')
 
 
-def make_episodes_list(url):
+def make_episodes_list(params):
     """ Make list of episode Listitems for Kodi"""
     try:
-        params = dict(urlparse.parse_qsl(url))
+        _url = sys.argv[0]
+        _handle = int(sys.argv[1])
         episodes = comm.list_episodes(params)
         listing = []
         for e in episodes:
-            li = create_listitem(
-                e.title,
-                iconImage=e.thumb,
-                thumbnailImage=e.thumb
-            )
-            li.setArt({'fanart': e.fanart})
+            li = create_listitem(e.title)
+            li.setArt({'fanart': e.fanart,
+                       'icon': e.thumb,
+                       'thumb': e.thumb})
             url = '{0}?action=listepisodes{1}'.format(_url, e.make_kodi_url())
             is_folder = False
             li.setProperty('IsPlayable', 'true')
@@ -90,19 +86,18 @@ def make_episodes_list(url):
         utils.handle_error('Unable to list episodes')
 
 
-def make_live_list(url):
+def make_live_list(params):
     """ Make list of channel Listitems for Kodi"""
     try:
-        params = dict(urlparse.parse_qsl(url))
+        _url = sys.argv[0]
+        _handle = int(sys.argv[1])
         channels = comm.list_live(params)
         listing = []
         for c in channels:
-            li = create_listitem(
-                c.title,
-                iconImage=c.thumb,
-                thumbnailImage=c.thumb
-            )
-            li.setArt({'fanart': c.fanart})
+            li = create_listitem(c.title)
+            li.setArt({'fanart': c.fanart,
+                       'icon': c.thumb,
+                       'thumb': c.thumb})
             url = '{0}?action=listchannels{1}'.format(_url, c.make_kodi_url())
             is_folder = False
             li.setProperty('IsPlayable', 'true')
@@ -116,10 +111,11 @@ def make_live_list(url):
         utils.handle_error('Unable to list channels')
 
 
-def make_series_list(url):
+def make_series_list(params):
     """ Make list of series Listitems for Kodi"""
     try:
-        params = dict(urlparse.parse_qsl(url))
+        _url = sys.argv[0]
+        _handle = int(sys.argv[1])
         series_list = comm.list_series()
         if 'genre' in params:
             series_slug_list = comm.list_series_by_genre(params['genre'])
@@ -127,12 +123,10 @@ def make_series_list(url):
                             if s.series_slug in series_slug_list]
         listing = []
         for s in series_list:
-            li = create_listitem(
-                s.title,
-                iconImage=s.thumb,
-                thumbnailImage=s.thumb
-            )
-            li.setArt({'fanart': s.fanart})
+            li = create_listitem(s.title)
+            li.setArt({'fanart': s.fanart,
+                       'icon': s.thumb,
+                       'thumb': s.thumb})
             url = '{0}?action=listseries{1}'.format(_url, s.make_kodi_url())
             is_folder = True
             li.setInfo('video', {'plot': s.desc, 'plotoutline': s.desc})
@@ -143,4 +137,5 @@ def make_series_list(url):
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
         xbmcplugin.endOfDirectory(_handle)
     except Exception:
+        raise
         utils.handle_error('Unable to list series')

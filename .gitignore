@@ -1,6 +1,9 @@
-# python pyc
+*.swp
 *.pyc
 *.pyo
-
-# zip file
 *.zip
+.cache
+.deploy
+.tox
+.idea
+__pycache__

@@ -1,11 +1,12 @@
-import classes
-import config
 import json
+
 import requests
 
 from aussieaddonscommon.exceptions import AussieAddonsException
 from aussieaddonscommon import utils
 
+import resources.lib.classes as classes
+import resources.lib.config as config
 
 cache = classes.CacheObj()
 ADDON_ID = 'plugin.video.catchuptv.au.nine'
@@ -31,7 +32,7 @@ def fetch_bc_url(url, headers={}):
             except IndexError:
                 raise e
             except ValueError:
-                raise e
+                raise
         else:
             raise e
 
@@ -49,7 +50,7 @@ def list_series():
     for show in data['items']:
         if show.get('containsSeason'):
             for season in reversed(show['containsSeason']):
-                s = classes.series()
+                s = classes.Series()
                 s.multi_season = len(show['containsSeason']) > 1
                 s.season_slug = season.get('slug')
                 s.series_name = utils.ensure_ascii(show.get('name'))
@@ -94,10 +95,12 @@ def list_genres():
 
     listing = []
     for genre in data['items']:
-        g = classes.genre()
+        g = classes.Genre()
         g.fanart = genre['image']['sizes'].get('w1280')
         g.thumb = genre['image']['sizes'].get('w480')
         g.genre_slug = genre.get('slug')
+        if not g.genre_slug:
+            utils.log(genre)
         g.title = genre.get('name')
         listing.append(g)
 
@@ -121,7 +124,7 @@ def list_episodes(params):
             episode['partOfSeason'].get('slug') != params['season_slug']):
             return
 
-        e = classes.episode()
+        e = classes.Episode()
         e.episode_no = str(episode['episodeNumber'])
         e.thumb = episode['image']['sizes'].get('w480')
         e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
@@ -197,7 +200,7 @@ def list_live(params):
 
     listing = []
     for channel in data['channels']:
-        c = classes.channel()
+        c = classes.Channel()
         c.title = channel.get('name')
         c.fanart = channel['image']['sizes'].get('w1280')
         c.thumb = channel['image']['sizes'].get('w480')
@@ -206,7 +209,7 @@ def list_live(params):
         c.id = channel.get('referenceId')
         listing.append(c)
     for channel in data['events']:
-        c = classes.channel()
+        c = classes.Channel()
         c.title = channel.get('name')
         c.fanart = channel['image']['sizes'].get('w1280')
         c.thumb = channel['image']['sizes'].get('w480')

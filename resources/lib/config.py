@@ -12,7 +12,6 @@ TVSERIESQUERY_URL = "https://tv-api.9now.com.au/v2/pages/genres/{0}?device=web"
 EPISODEQUERY_URL = "https://tv-api.9now.com.au/v2/pages/tv-series/{0}/seasons/{1}/episodes{2}?device=web"
 LIVETV_URL = "https://tv-api.9now.com.au/v2/pages/livestreams?device=web"
 
-BRIGHTCOVE_URL = "http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId={0}"
 BRIGHTCOVE_DRM_URL = "https://edge.api.brightcove.com/playback/v1/accounts/{0}/videos/ref:{1}"
 BRIGHTCOVE_ACCOUNT = "4460760524001"
 BRIGHTCOVE_KEY = "BCpkADawqM1TWX5yhWjKdzhXnHCmGvnaozGSDICiEFNRv0fs12m6WA2hLxMHM8TGAEM6pv7lhJsdNhiQi76p4IcsT_jmXdtEU-wnfXhOBTx-cGR7guCqVwjyFAtQa75PFF-TmWESuiYaNTzg"

@@ -1,0 +1,240 @@
+{
+  "poster": "https://cf-images.ap-southeast-2.prod.boltdns.net/v1/static/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/1f0ac6a8-b6e9-4a0a-9601-df81eaf3eebe/640x360/match/image.jpg",
+  "thumbnail": "https://cf-images.ap-southeast-2.prod.boltdns.net/v1/static/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/1deed87f-d821-4c50-9eab-6e8aa9ad6454/160x90/match/image.jpg",
+  "poster_sources": [
+    {
+      "src": "https://cf-images.ap-southeast-2.prod.boltdns.net/v1/static/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/1f0ac6a8-b6e9-4a0a-9601-df81eaf3eebe/640x360/match/image.jpg"
+    }
+  ],
+  "thumbnail_sources": [
+    {
+      "src": "https://cf-images.ap-southeast-2.prod.boltdns.net/v1/static/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/1deed87f-d821-4c50-9eab-6e8aa9ad6454/160x90/match/image.jpg"
+    }
+  ],
+  "description": "A group of misfit women joins forces to help each other juggle the challenges of work, romance, parenthood – and solving a murder.",
+  "tags": [
+    "episode"
+  ],
+  "cue_points": [
+    {
+      "id": "6152246997001",
+      "name": "Cue point 1",
+      "type": "AD",
+      "time": 0,
+      "metadata": null,
+      "force_stop": false
+    },
+    {
+      "id": "6152246998001",
+      "name": "Cue point 2",
+      "type": "AD",
+      "time": 775.92,
+      "metadata": null,
+      "force_stop": false
+    },
+    {
+      "id": "6152246999001",
+      "name": "Cue point 3",
+      "type": "AD",
+      "time": 1266.04,
+      "metadata": null,
+      "force_stop": false
+    },
+    {
+      "id": "6152247000001",
+      "name": "Cue point 4",
+      "type": "AD",
+      "time": 1888.08,
+      "metadata": null,
+      "force_stop": false
+    },
+    {
+      "id": "6152247001001",
+      "name": "Cue point 5",
+      "type": "AD",
+      "time": 2208.92,
+      "metadata": null,
+      "force_stop": false
+    }
+  ],
+  "custom_fields": {
+    "media_type": "tvEpisode"
+  },
+  "account_id": "4460760524001",
+  "sources": [
+    {
+      "codecs": "avc1,mp4a",
+      "ext_x_version": "3",
+      "src": "http://manifest.prod.boltdns.net/manifest/v1/hls/v3/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/10s/master.m3u8?fastly_token=NWZjMDk0ZjBfN2JjYjJkZjViZjYyM2RhMWRiMGVkMThkOTRlMTQwZTUzNTc4ZDExYTYxY2RmYWJmN2Q5MGNiZWQ2YjMxZGE4NQ%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "ext_x_version": "3",
+      "src": "https://manifest.prod.boltdns.net/manifest/v1/hls/v3/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/10s/master.m3u8?fastly_token=NWZjMDk0ZjBfN2JjYjJkZjViZjYyM2RhMWRiMGVkMThkOTRlMTQwZTUzNTc4ZDExYTYxY2RmYWJmN2Q5MGNiZWQ2YjMxZGE4NQ%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "ext_x_version": "4",
+      "src": "http://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/10s/master.m3u8?fastly_token=NWZjMDk0ZjBfNTc1Zjk3NzZmOGZhNTUxM2Q0OTM3YzQyYzQ2OTdhYWNiM2JlY2IyMDFlMDdhNmIwNTFjZGRjNDQzZTljMjY0OA%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "ext_x_version": "4",
+      "src": "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/10s/master.m3u8?fastly_token=NWZjMDk0ZjBfNTc1Zjk3NzZmOGZhNTUxM2Q0OTM3YzQyYzQ2OTdhYWNiM2JlY2IyMDFlMDdhNmIwNTFjZGRjNDQzZTljMjY0OA%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "ext_x_version": "5",
+      "src": "http://manifest.prod.boltdns.net/manifest/v1/hls/v5/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/10s/master.m3u8?fastly_token=NWZjMDk0ZjBfMTFhNzczNGQwNjA2NmQyNjU0NTQ0OTg0MDkzODU2N2M4M2ZjZTEwNWExZmMxZjhmYjMyZGJmYzVhNmNiMjQ5Nw%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "ext_x_version": "5",
+      "src": "https://manifest.prod.boltdns.net/manifest/v1/hls/v5/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/10s/master.m3u8?fastly_token=NWZjMDk0ZjBfMTFhNzczNGQwNjA2NmQyNjU0NTQ0OTg0MDkzODU2N2M4M2ZjZTEwNWExZmMxZjhmYjMyZGJmYzVhNmNiMjQ5Nw%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
+      "src": "http://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/2s/manifest.mpd?fastly_token=NWZjMDk0ZjBfNTYxMmIwOGZhZmQ1Zjc3OWJkZDBlMDFhOGZhNDUyNjc5ZDQyYTEwNGEwZWYyYmUyYWZiMWVmMzQ1MDE5M2QxYw%3D%3D",
+      "type": "application/dash+xml"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
+      "src": "https://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/2s/manifest.mpd?fastly_token=NWZjMDk0ZjBfNTYxMmIwOGZhZmQ1Zjc3OWJkZDBlMDFhOGZhNDUyNjc5ZDQyYTEwNGEwZWYyYmUyYWZiMWVmMzQ1MDE5M2QxYw%3D%3D",
+      "type": "application/dash+xml"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "profiles": "urn:hbbtv:dash:profile:isoff-live:2012,urn:mpeg:dash:profile:isoff-live:2011",
+      "src": "http://manifest.prod.boltdns.net/manifest/v1/dash/live-hbbtv15/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/2s/manifest.mpd?fastly_token=NWZjMDk0ZjBfYWYxZDdiY2ZlMGM4NTA5Y2VkMTg2NGVkNDhiYWVjODE2YThlZWEzNDMxMGQ0ZWQzOGY1OTBmYzJjMGE1NThlZQ%3D%3D",
+      "type": "application/dash+xml"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "profiles": "urn:hbbtv:dash:profile:isoff-live:2012,urn:mpeg:dash:profile:isoff-live:2011",
+      "src": "https://manifest.prod.boltdns.net/manifest/v1/dash/live-hbbtv15/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/2s/manifest.mpd?fastly_token=NWZjMDk0ZjBfYWYxZDdiY2ZlMGM4NTA5Y2VkMTg2NGVkNDhiYWVjODE2YThlZWEzNDMxMGQ0ZWQzOGY1OTBmYzJjMGE1NThlZQ%3D%3D",
+      "type": "application/dash+xml"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "src": "http://p-9now.akamaized.net/media/v1/smooth/simple/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/manifest.ismc?akamai_token=exp=1606456560~acl=/media/v1/smooth/simple/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/manifest.ismc*~hmac=bf7eda7b4d0f6697953bc6b5fd5ca404298073abe2b1d1b29e4ffc8aa7780b3e",
+      "type": "application/vnd.ms-sstr+xml"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "src": "https://p-9now.akamaized.net/media/v1/smooth/simple/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/manifest.ismc?akamai_token=exp=1606456560~acl=/media/v1/smooth/simple/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/manifest.ismc*~hmac=bf7eda7b4d0f6697953bc6b5fd5ca404298073abe2b1d1b29e4ffc8aa7780b3e",
+      "type": "application/vnd.ms-sstr+xml"
+    },
+    {
+      "avg_bitrate": 2118000,
+      "codec": "H264",
+      "container": "MP4",
+      "duration": 2424162,
+      "height": 720,
+      "size": 643024434,
+      "src": "http://p-9now.akamaized.net/media/v1/pmp4/static/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/d24128fe-b97f-4da6-86af-0efc8bd43490/main.mp4?akamai_token=exp=1606456560~acl=/media/v1/pmp4/static/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/d24128fe-b97f-4da6-86af-0efc8bd43490/main.mp4*~hmac=ca858bfbe5d4040b4a9f6d67aab778b033880369aadf53e252f153d607165eb0",
+      "width": 1280
+    },
+    {
+      "avg_bitrate": 2118000,
+      "codec": "H264",
+      "container": "MP4",
+      "duration": 2424162,
+      "height": 720,
+      "size": 643024434,
+      "src": "https://p-9now.akamaized.net/media/v1/pmp4/static/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/d24128fe-b97f-4da6-86af-0efc8bd43490/main.mp4?akamai_token=exp=1606456560~acl=/media/v1/pmp4/static/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/d24128fe-b97f-4da6-86af-0efc8bd43490/main.mp4*~hmac=ca858bfbe5d4040b4a9f6d67aab778b033880369aadf53e252f153d607165eb0",
+      "width": 1280
+    },
+    {
+      "avg_bitrate": 512000,
+      "codec": "H264",
+      "container": "MP4",
+      "duration": 2424162,
+      "height": 270,
+      "size": 155976884,
+      "src": "http://p-9now.akamaized.net/media/v1/pmp4/static/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/4e2ed5a8-9553-4b27-b5fa-fcecc529b3a4/main.mp4?akamai_token=exp=1606456560~acl=/media/v1/pmp4/static/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/4e2ed5a8-9553-4b27-b5fa-fcecc529b3a4/main.mp4*~hmac=940b8f658157393dc4b69e02a7794a25ed5bb52f584e9f19d1d9385d1101f6ca",
+      "width": 480
+    },
+    {
+      "avg_bitrate": 512000,
+      "codec": "H264",
+      "container": "MP4",
+      "duration": 2424162,
+      "height": 270,
+      "size": 155976884,
+      "src": "https://p-9now.akamaized.net/media/v1/pmp4/static/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/4e2ed5a8-9553-4b27-b5fa-fcecc529b3a4/main.mp4?akamai_token=exp=1606456560~acl=/media/v1/pmp4/static/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/4e2ed5a8-9553-4b27-b5fa-fcecc529b3a4/main.mp4*~hmac=940b8f658157393dc4b69e02a7794a25ed5bb52f584e9f19d1d9385d1101f6ca",
+      "width": 480
+    }
+  ],
+  "name": "Episode 1",
+  "reference_id": "cjs7n6427002k0hr05m5x9k7z",
+  "long_description": null,
+  "duration": 2424163,
+  "economics": "AD_SUPPORTED",
+  "text_tracks": [
+    {
+      "id": "a618a8cf-b4fc-4162-ae94-3c637b5d44f5",
+      "account_id": "4460760524001",
+      "src": "http://p-9now.akamaized.net/media/v1/text/vtt/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/a618a8cf-b4fc-4162-ae94-3c637b5d44f5/text.vtt?akamai_token=exp=1606382608~acl=/media/v1/text/vtt/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/a618a8cf-b4fc-4162-ae94-3c637b5d44f5/text.vtt*~hmac=424b88d8017284cdbdfa06e5f01497ac36f2d4b569005e086d9aa83e826335af",
+      "srclang": "en",
+      "label": "EN",
+      "kind": "captions",
+      "mime_type": "text/webvtt",
+      "asset_id": null,
+      "sources": [
+        {
+          "src": "http://p-9now.akamaized.net/media/v1/text/vtt/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/a618a8cf-b4fc-4162-ae94-3c637b5d44f5/text.vtt?akamai_token=exp=1606382608~acl=/media/v1/text/vtt/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/a618a8cf-b4fc-4162-ae94-3c637b5d44f5/text.vtt*~hmac=424b88d8017284cdbdfa06e5f01497ac36f2d4b569005e086d9aa83e826335af"
+        },
+        {
+          "src": "https://p-9now.akamaized.net/media/v1/text/vtt/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/a618a8cf-b4fc-4162-ae94-3c637b5d44f5/text.vtt?akamai_token=exp=1606382608~acl=/media/v1/text/vtt/clear/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/a618a8cf-b4fc-4162-ae94-3c637b5d44f5/text.vtt*~hmac=424b88d8017284cdbdfa06e5f01497ac36f2d4b569005e086d9aa83e826335af"
+        }
+      ],
+      "in_band_metadata_track_dispatch_type": "",
+      "default": false
+    },
+    {
+      "id": null,
+      "account_id": "4460760524001",
+      "src": "http://manifest.prod.boltdns.net/thumbnail/v1/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/57978e4f-d35a-4471-8608-04a8780d257b/thumbnail.webvtt?fastly_token=NWZjMDk0ZjBfOTc1OTY3YWUzYmJlMDE3NDA0MDBjODk3ZjYwNTIyYjVlOGM2ZDAyZjBjODU3Nzc3NDYyYWE1N2QzN2VjY2JhYQ%3D%3D",
+      "srclang": null,
+      "label": "thumbnails",
+      "kind": "metadata",
+      "mime_type": "text/webvtt",
+      "asset_id": null,
+      "sources": null,
+      "default": false,
+      "width": 480,
+      "height": 270,
+      "bandwidth": 449
+    },
+    {
+      "id": null,
+      "account_id": "4460760524001",
+      "src": "https://manifest.prod.boltdns.net/thumbnail/v1/4460760524001/713677e9-27e5-483e-a9f4-cf6d05f419e1/57978e4f-d35a-4471-8608-04a8780d257b/thumbnail.webvtt?fastly_token=NWZjMDk0ZjBfOTc1OTY3YWUzYmJlMDE3NDA0MDBjODk3ZjYwNTIyYjVlOGM2ZDAyZjBjODU3Nzc3NDYyYWE1N2QzN2VjY2JhYQ%3D%3D",
+      "srclang": null,
+      "label": "thumbnails",
+      "kind": "metadata",
+      "mime_type": "text/webvtt",
+      "asset_id": null,
+      "sources": null,
+      "default": false,
+      "width": 480,
+      "height": 270,
+      "bandwidth": 449
+    }
+  ],
+  "published_at": "2020-04-27T07:12:29.777Z",
+  "created_at": "2020-04-27T07:12:29.759Z",
+  "updated_at": "2020-04-27T07:32:59.435Z",
+  "offline_enabled": false,
+  "link": null,
+  "id": "6152260428001",
+  "ad_keys": null
+}

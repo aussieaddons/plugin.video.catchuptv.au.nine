@@ -1,69 +1,75 @@
-import urlparse
 import urllib
 import unicodedata
 import json
 import datetime
 import xbmcgui
+from builtins import str
+from future.backports.urllib.parse import parse_qsl, quote_plus
 
-from config import USER_AGENT
+from resources.lib.config import USER_AGENT
 
 from threading import Thread
-from collections import deque
+from collections import deque, OrderedDict
 
 from aussieaddonscommon import session
 from aussieaddonscommon import utils
 
 
-class genre(object):
-    def __init__(self, attrs=None):
-        if attrs:
-            for attr, val in attrs.items():
-                setattr(self, attr, val)
-            return
-
+class BaseItem(object):
+    def __init__(self, **kwargs):
         self.fanart = None
         self.thumb = None
         self.title = None
-        self.genre_slug = None
+        if kwargs:
+            for attr, val in kwargs.items():
+                setattr(self, attr, val)
 
     def __repr__(self):
-        return type(self).__name__ + '(' + str(dict(vars(self).items())) + ')'
+        return type(self).__name__ + '(**' + str(dict(vars(self).items())) + ')'
 
     def make_kodi_url(self):
-        d = vars(self)
-        for key, value in d.iteritems():
-            if isinstance(value, unicode):
+        d_original = OrderedDict(
+            sorted(self.__dict__.items(), key=lambda x: x[0]))
+        d = d_original.copy()
+        for key, value in d_original.items():
+            if not value:
+                d.pop(key)
+                continue
+            if isinstance(value, str):
                 d[key] = unicodedata.normalize(
-                    'NFKD', value).encode('ascii', 'ignore')
-        return '&{0}'.format(urllib.urlencode(d))
+                    'NFKD', value).encode('ascii', 'ignore').decode('utf-8')
+        url = ''
+        for key in d.keys():
+            if isinstance(d[key], (str, bytes)):
+                val = quote_plus(d[key])
+            else:
+                val = d[key]
+            url += '&{0}={1}'.format(key, val)
+        return url
 
     def parse_kodi_url(self, url):
-        params = urlparse.parse_qsl(url)
+        params = dict(parse_qsl(url))
         for item in params.keys():
             setattr(self, item, urllib.unquote_plus(params[item]))
 
 
-class series(object):
-    def __init__(self, attrs=None):
-        if attrs:
-            for attr, val in attrs.items():
-                setattr(self, attr, val)
-            return
+class Genre(BaseItem):
+    def __init__(self, **kwargs):
+        super(Genre, self).__init__(**kwargs)
+        self.genre_slug = None
 
+
+class Series(BaseItem):
+    def __init__(self, **kwargs):
+        super(Series, self).__init__(**kwargs)
         self.multi_season = None
-        self.fanart = None
-        self.thumb = None
         self.series_name = None
         self.series_slug = None
         self.season_name = None
         self.season_slug = None
-        self.title = None
         self.genre = None
         self.genre_slug = None
         self.desc = None
-
-    def __repr__(self):
-        return type(self).__name__ + '(' + str(dict(vars(self).items())) + ')'
 
     def get_title(self):
         if self.multi_season:
@@ -71,37 +77,14 @@ class series(object):
         else:
             return self.series_name
 
-    def make_kodi_url(self):
-        d = vars(self)
-        for key in d.keys():
-            if not d[key]:
-                d.pop(key)
-                continue
-            if isinstance(d[key], unicode):
-                d[key] = unicodedata.normalize(
-                    'NFKD', d[key]).encode('ascii', 'ignore')
-        return '&{0}'.format(urllib.urlencode(d))
 
-    def parse_kodi_url(self, url):
-        params = dict(urlparse.parse_qsl(url))
-        for item in params.keys():
-            setattr(self, item, urllib.unquote_plus(params[item]))
-
-
-class episode(object):
-    def __init__(self, attrs=None):
-        if attrs:
-            for attr, val in attrs.items():
-                setattr(self, attr, val)
-            return
-
+class Episode(BaseItem):
+    def __init__(self, **kwargs):
+        super(Episode, self).__init__(**kwargs)
         self.series_slug = None
         self.series_title = None
         self.season_slug = None
         self.season_no = None
-        self.fanart = None
-        self.thumb = None
-        self.title = None
         self.desc = None
         self.duration = None
         self.airdate = None
@@ -113,60 +96,21 @@ class episode(object):
         self.license_url = None
         self.license_key = None
 
-    def __repr__(self):
-        return type(self).__name__ + '(' + str(dict(vars(self).items())) + ')'
-
     def get_title(self):
         return 'Ep {0} - {1}'.format(self.episode_no, self.episode_name)
 
-    def make_kodi_url(self):
-        d = vars(self)
-        for key, value in d.iteritems():
-            if isinstance(value, unicode):
-                d[key] = unicodedata.normalize(
-                    'NFKD', value).encode('ascii', 'ignore')
-        return '&{0}'.format(urllib.urlencode(d))
 
-    def parse_kodi_url(self, url):
-        params = urlparse.parse_qsl(url)
-        for item in params.keys():
-            setattr(self, item, urllib.unquote_plus(params[item]))
-
-
-class channel(object):
-    def __init__(self, attrs=None):
-        if attrs:
-            for attr, val in attrs.items():
-                setattr(self, attr, val)
-            return
-
-        self.fanart = None
-        self.thumb = None
-        self.title = None
+class Channel(BaseItem):
+    def __init__(self, **kwargs):
+        super(Channel, self).__init__(**kwargs)
         self.desc = None
         self.episode_name = None
         self.url = None
         self.id = None
         self.drm = None
 
-    def __repr__(self):
-        return type(self).__name__ + '(' + str(dict(vars(self).items())) + ')'
-
     def get_title(self):
         return '{0} - {1}'.format(self.title, self.desc)
-
-    def make_kodi_url(self):
-        d = vars(self)
-        for key, value in d.iteritems():
-            if isinstance(value, unicode):
-                d[key] = unicodedata.normalize(
-                    'NFKD', value).encode('ascii', 'ignore')
-        return '&{0}'.format(urllib.urlencode(d))
-
-    def parse_kodi_url(self, url):
-        params = urlparse.parse_qsl(url)
-        for item in params.keys():
-            setattr(self, item, urllib.unquote_plus(params[item]))
 
 
 class CacheObj():

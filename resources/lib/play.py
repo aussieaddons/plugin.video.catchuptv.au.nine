@@ -1,8 +1,6 @@
 import csv
 import os
 import sys
-import comm
-import config
 import drmhelper
 import StringIO
 
@@ -15,11 +13,11 @@ import xbmcplugin
 from aussieaddonscommon import utils
 from aussieaddonscommon import session as custom_session
 
+import resources.lib.comm as comm
+import resources.lib.config as config
+
 from pycaption import SRTWriter
 from pycaption import WebVTTReader
-
-_url = sys.argv[0]
-_handle = int(sys.argv[1])
 
 
 def parse_m3u8(m3u8_url, qual=-1, live=False):
@@ -76,10 +74,12 @@ def play_video(params):
     Determine content and pass url to Kodi for playback
     """
     try:
+        _url = sys.argv[0]
+        _handle = int(sys.argv[1])
         json_url = config.BRIGHTCOVE_DRM_URL.format(
             config.BRIGHTCOVE_ACCOUNT, params['id'])
 
-        if params['drm'] == 'True':
+        if params.get('drm') == 'True':
             if xbmcaddon.Addon().getSetting('ignore_drm') == 'false':
                 if not drmhelper.check_inputstream():
                     return
@@ -97,17 +97,10 @@ def play_video(params):
                 widevine['key'] + ('|Content-Type=application%2F'
                                    'x-www-form-urlencoded|A{SSM}|'))
         else:
-            if params['action'] == 'listchannels':
-                qual = int(xbmcaddon.Addon().getSetting('LIVEQUALITY'))
-                live = True
-            else:
-                qual = int(xbmcaddon.Addon().getSetting('HLSQUALITY'))
-                live = False
-
+            live = params['action'] == 'listchannels'
             stream_data = comm.get_stream(json_url, live=live)
-            m3u8 = stream_data.get('url')
+            url = str(stream_data.get('url'))
             sub_url = stream_data.get('sub_url')
-            url = parse_m3u8(m3u8, qual=qual, live=live)
             play_item = xbmcgui.ListItem(path=url)
             utils.log('Playing {0} - {1}'.format(params.get('title'), url))
 
@@ -209,4 +202,5 @@ def play_video(params):
         upnext.send_signal(xbmcaddon.Addon().getAddonInfo('id'), upnext_info)
 
     except Exception:
+        raise
         utils.handle_error('Unable to play video')
