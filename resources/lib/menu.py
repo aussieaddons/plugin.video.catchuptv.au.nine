@@ -1,12 +1,16 @@
-import xbmcgui
-import xbmcplugin
 import sys
-import urllib
+
+from future.moves.urllib.parse import quote_plus
 
 from aussieaddonscommon import utils
 
 import resources.lib.comm as comm
 import resources.lib.config as config
+
+import xbmcgui
+
+import xbmcplugin
+
 
 def create_listitem(*args, **kwargs):
     ver = utils.get_kodi_major_version()
@@ -40,7 +44,7 @@ def list_categories():
                        'icon': g.thumb,
                        'thumb': g.thumb})
             url_string = '{0}?action=listcategories&category=genre&genre={1}'
-            url = url_string.format(_url, urllib.quote_plus(g.genre_slug))
+            url = url_string.format(_url, quote_plus(g.genre_slug))
             is_folder = True
             listing.append((url, li, is_folder))
         li = create_listitem('Settings')
@@ -48,7 +52,6 @@ def list_categories():
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
         xbmcplugin.endOfDirectory(_handle)
     except Exception:
-        raise
         utils.handle_error('Unable to list categories')
 
 
@@ -120,7 +123,7 @@ def make_series_list(params):
         if 'genre' in params:
             series_slug_list = comm.list_series_by_genre(params['genre'])
             series_list = [s for s in series_list
-                            if s.series_slug in series_slug_list]
+                           if s.series_slug in series_slug_list]
         listing = []
         for s in series_list:
             li = create_listitem(s.title)
@@ -137,5 +140,4 @@ def make_series_list(params):
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
         xbmcplugin.endOfDirectory(_handle)
     except Exception:
-        raise
         utils.handle_error('Unable to list series')

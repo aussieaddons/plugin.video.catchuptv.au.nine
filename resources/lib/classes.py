@@ -1,18 +1,18 @@
-import urllib
-import unicodedata
-import json
 import datetime
-import xbmcgui
+import json
+import unicodedata
 from builtins import str
-from future.backports.urllib.parse import parse_qsl, quote_plus
-
-from resources.lib.config import USER_AGENT
-
+from collections import OrderedDict, deque
 from threading import Thread
-from collections import deque, OrderedDict
+
+from future.backports.urllib.parse import parse_qsl, quote_plus, unquote_plus
 
 from aussieaddonscommon import session
 from aussieaddonscommon import utils
+
+from resources.lib.config import USER_AGENT
+
+import xbmcgui
 
 
 class BaseItem(object):
@@ -25,7 +25,8 @@ class BaseItem(object):
                 setattr(self, attr, val)
 
     def __repr__(self):
-        return type(self).__name__ + '(**' + str(dict(vars(self).items())) + ')'
+        return type(
+            self).__name__ + '(**' + str(dict(vars(self).items())) + ')'
 
     def make_kodi_url(self):
         d_original = OrderedDict(
@@ -50,7 +51,7 @@ class BaseItem(object):
     def parse_kodi_url(self, url):
         params = dict(parse_qsl(url))
         for item in params.keys():
-            setattr(self, item, urllib.unquote_plus(params[item]))
+            setattr(self, item, unquote_plus(params[item]))
 
 
 class Genre(BaseItem):
@@ -153,7 +154,6 @@ class CacheObj():
                         return cachedData[1]
                 except Exception as e:
                     utils.log('Error with eval of cached data: {0}'.format(e))
-                    #utils.log(rawData)
 
             data = CacheObj.fetch_url(url=url, headers=headers)
 
@@ -187,5 +187,5 @@ class CacheObj():
                 return data
             except ValueError as e:
                 utils.log('Error parsing JSON, response is {0}'
-                            .format(res.text))
+                          .format(res.text))
                 raise e

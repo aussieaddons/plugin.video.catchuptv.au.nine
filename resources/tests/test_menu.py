@@ -2,7 +2,6 @@ from __future__ import absolute_import, unicode_literals
 
 import importlib
 import io
-import json
 import os
 import re
 import sys
@@ -12,13 +11,13 @@ try:
 except ImportError:
     import unittest.mock as mock
 
-import testtools
-
 import responses
 
-import resources.lib.config as config
+import testtools
 
+import resources.lib.config as config
 from resources.tests.fakes import fakes
+
 
 class MenuTests(testtools.TestCase):
     @classmethod
@@ -59,7 +58,7 @@ class MenuTests(testtools.TestCase):
     @responses.activate
     def test_list_categories(self, mock_listitem, mock_version):
         responses.add('GET',
-                      re.compile('https://tv-api.9now.com.au/v2/genres\?'),
+                      re.compile('https://tv-api.9now.com.au/v2/genres\\?'),
                       body=self.GENRES_JSON)
         mock_listitem.side_effect = fakes.FakeListItem
         mock_version.return_value = 17
@@ -127,5 +126,3 @@ class MenuTests(testtools.TestCase):
         self.assertEqual(55, len(self.mock_plugin.directory))
         self.assertEqual('Bad Mothers', self.mock_plugin.directory[0].get(
             'listitem').getLabel())
-
-

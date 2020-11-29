@@ -11,9 +11,9 @@ try:
 except ImportError:
     import unittest.mock as mock
 
-import testtools
-
 import responses
+
+import testtools
 
 from resources.tests.fakes import fakes
 

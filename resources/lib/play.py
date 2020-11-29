@@ -1,72 +1,24 @@
-import csv
 import os
 import sys
-import drmhelper
-import StringIO
 
-import urlparse
-import xbmc
-import xbmcaddon
-import xbmcgui
-import xbmcplugin
-
-from aussieaddonscommon import utils
 from aussieaddonscommon import session as custom_session
+from aussieaddonscommon import utils
 
-import resources.lib.comm as comm
-import resources.lib.config as config
+import drmhelper
 
 from pycaption import SRTWriter
 from pycaption import WebVTTReader
 
+import resources.lib.comm as comm
+import resources.lib.config as config
 
-def parse_m3u8(m3u8_url, qual=-1, live=False):
-    """
-    Parse the retrieved m3u8 stream list into a list of dictionaries
-    then return the url for the highest quality stream.
-    """
-    # most shows have 5 streams of different quality, but some have 6 or more
-    # so we'll make sure that the highest quality is chosen if it's set that
-    # way in the settings.
-    if qual == config.MAX_HLS_QUAL:
-        qual = -1
+import xbmc
 
-    m3u_list = []
-    with custom_session.Session() as s:
-        data = s.get(m3u8_url, verify=False).text.splitlines()
-    iterable = iter(data)
-    for line in iterable:
-        prefix = '#EXT-X-STREAM-INF:'
-        if line.startswith(prefix):
-            buff = StringIO.StringIO(line[len(prefix):])
-            for line in csv.reader(buff):
-                stream_inf = line
-                break
-            # hack because csv can't parse commas in quotes if preceded by text
-            # 'CODECS="mp4a.40.2,avc1.420015"'
-            enum = enumerate(stream_inf)
-            for idx, x in enum:
-                if x.count('"') == 1:
-                    stream_inf[idx] = '{0},{1}'.format(x, stream_inf[idx + 1])
-                    stream_inf.pop(idx + 1)
-                    next(enum)
+import xbmcaddon
 
-            stream_data = dict(map(lambda x: x.split('='), stream_inf))
-            if live:
-                url = urlparse.urljoin(m3u8_url, iterable.next())
-            else:
-                url = iterable.next()
-            stream_data['URL'] = url
-            m3u_list.append(stream_data)
+import xbmcgui
 
-    sorted_m3u_list = sorted(m3u_list, key=lambda k: int(k['BANDWIDTH']))
-    utils.log('Available streams are: {0}'.format(sorted_m3u_list))
-    utils.log('Quality is: {0}'.format(qual))
-    try:
-        stream = sorted_m3u_list[qual]['URL']
-    except IndexError:  # less streams than we expected - go with highest
-        stream = sorted_m3u_list[-1]['URL']
-    return stream
+import xbmcplugin
 
 
 def play_video(params):
@@ -202,5 +154,4 @@ def play_video(params):
         upnext.send_signal(xbmcaddon.Addon().getAddonInfo('id'), upnext_info)
 
     except Exception:
-        raise
         utils.handle_error('Unable to play video')

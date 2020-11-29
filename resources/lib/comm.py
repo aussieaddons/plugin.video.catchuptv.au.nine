@@ -2,14 +2,15 @@ import json
 
 import requests
 
-from aussieaddonscommon.exceptions import AussieAddonsException
 from aussieaddonscommon import utils
+from aussieaddonscommon.exceptions import AussieAddonsException
 
 import resources.lib.classes as classes
 import resources.lib.config as config
 
 cache = classes.CacheObj()
 ADDON_ID = 'plugin.video.catchuptv.au.nine'
+
 
 def fetch_bc_url(url, headers={}):
     """
@@ -84,6 +85,7 @@ def list_series_by_genre(genre):
     cache.getData(name=ADDON_ID, url=url, data=listing)
     return listing
 
+
 def list_genres():
     """
     Create and return list of genre objects
@@ -99,8 +101,6 @@ def list_genres():
         g.fanart = genre['image']['sizes'].get('w1280')
         g.thumb = genre['image']['sizes'].get('w480')
         g.genre_slug = genre.get('slug')
-        if not g.genre_slug:
-            utils.log(genre)
         g.title = genre.get('name')
         listing.append(g)
 
@@ -121,7 +121,7 @@ def list_episodes(params):
             return
         # make sure season numbers match, some shows return all seasons.
         if ('partOfSeason' in episode and
-            episode['partOfSeason'].get('slug') != params['season_slug']):
+                episode['partOfSeason'].get('slug') != params['season_slug']):
             return
 
         e = classes.Episode()
@@ -146,13 +146,14 @@ def list_episodes(params):
         return e
 
     url = config.EPISODEQUERY_URL.format(params['series_slug'],
-        params['season_slug'], params.get('episode_slug',''))
+                                         params['season_slug'],
+                                         params.get('episode_slug', ''))
     data = cache.getData(name=ADDON_ID, url=url)
 
     if isinstance(data, list):
         if params.get('episode'):
             return [e for e in data
-                        if e.episode_no == str(params.get('episode'))]
+                    if e.episode_no == str(params.get('episode'))]
         return data
 
     episodes = []
@@ -171,8 +172,8 @@ def list_episodes(params):
 
     cache.getData(name=ADDON_ID, url=url, data=listing)
     if params.get('episode'):
-        return [e for e in listing
-                    if e.episode_no == str(params.get('episode'))]
+        return [x for x in listing
+                if x.episode_no == str(params.get('episode'))]
     return listing
 
 
@@ -182,7 +183,6 @@ def get_next_episode(episode):
 
     params = dict(series_slug=episode['series_slug'],
                   season_slug=episode['season_slug'],
-                  #episode_slug='episode-%s' % str(int(episode['episode_no'])+1),
                   episode=int(episode['episode_no'])+1)
 
     episodes = list_episodes(params)
@@ -252,7 +252,7 @@ def get_stream(url, live=False):
                 source.get('type') == 'application/x-mpegURL'):
             if (source.get('type') == 'application/x-mpegURL' and
                     source.get('ext_x_version') in ['4', '5']):
-                        continue
+                continue
             if 'https' in source.get('src'):
                 url = source.get('src')
                 if url:

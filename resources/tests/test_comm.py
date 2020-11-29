@@ -5,14 +5,9 @@ import json
 import os
 import re
 
-try:
-    import mock
-except ImportError:
-    import unittest.mock as mock
+import responses
 
 import testtools
-
-import responses
 
 import resources.lib.comm as comm
 import resources.lib.config as config
@@ -54,9 +49,10 @@ class CommTests(testtools.TestCase):
 
     @responses.activate
     def test_list_series_by_genre(self):
-        responses.add('GET',
-                      re.compile('https://tv-api.9now.com.au/v2/pages/genres/'),
-                      body=self.SERIES_QUERY_JSON)
+        responses.add(
+            'GET',
+            re.compile('https://tv-api.9now.com.au/v2/pages/genres/'),
+            body=self.SERIES_QUERY_JSON)
         responses.add('GET', config.TVSERIES_URL, body=self.TV_SERIES_JSON)
         observed = comm.list_series_by_genre('aussie-drama')
         self.assertEqual(23, len(observed))
@@ -65,7 +61,7 @@ class CommTests(testtools.TestCase):
     @responses.activate
     def test_list_genres(self):
         responses.add('GET',
-                      re.compile('https://tv-api.9now.com.au/v2/genres\?'),
+                      re.compile('https://tv-api.9now.com.au/v2/genres\\?'),
                       body=self.GENRES_JSON)
         observed = comm.list_genres()
         self.assertEqual(26, len(observed))

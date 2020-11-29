@@ -1,11 +1,13 @@
 import sys
-import xbmcaddon
-from urlparse import parse_qsl
+
+from future.backports.urllib.parse import parse_qsl
 
 from aussieaddonscommon import utils
 
 import resources.lib.menu as menu
 import resources.lib.play as play
+
+import xbmcaddon
 
 
 def main():

@@ -1,8 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import importlib
-import io
-import os
 
 try:
     import mock
@@ -18,7 +16,7 @@ class DefaultTests(testtools.TestCase):
 
     @classmethod
     def setUpClass(self):
-        cwd = os.path.join(os.getcwd(), 'resources/tests')
+        pass
 
     def setUp(self):
         super(DefaultTests, self).setUp()

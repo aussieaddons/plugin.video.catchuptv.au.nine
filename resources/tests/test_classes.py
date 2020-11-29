@@ -1,10 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
 import io
-import os
 import json
-
-from collections import OrderedDict
+import os
 from datetime import datetime
 
 try:
@@ -15,8 +13,8 @@ except ImportError:
 import testtools
 
 import resources.lib.classes as classes
-
 from resources.tests.fakes import fakes
+
 
 class ClassesBaseItemTests(testtools.TestCase):
     def test_repr(self):
@@ -39,7 +37,8 @@ class ClassesCacheObjTests(testtools.TestCase):
         mock_window.return_value = window
         now = datetime.now()
         cached_data = (now, json.loads(self.TV_SERIES_JSON))
-        window.setProperty('%s|%s' % ('foo', 'http://foo.bar'), repr(cached_data))
+        window.setProperty(
+            '%s|%s' % ('foo', 'http://foo.bar'), repr(cached_data))
         cache = classes.CacheObj()
         observed = cache.getData('http://foo.bar', name='foo')
         self.assertEqual(json.loads(self.TV_SERIES_JSON), observed)
