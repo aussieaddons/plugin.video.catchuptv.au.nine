@@ -126,3 +126,27 @@ class MenuTests(testtools.TestCase):
         self.assertEqual(55, len(self.mock_plugin.directory))
         self.assertEqual('Bad Mothers', self.mock_plugin.directory[0].get(
             'listitem').getLabel())
+
+    @mock.patch('resources.lib.comm.cache.win', fakes.FakeWindow())
+    @mock.patch('resources.lib.classes.utils.get_kodi_major_version')
+    @mock.patch('xbmcgui.ListItem')
+    @mock.patch('sys.argv', ['plugin://plugin.video.catchuptv.au.nine/', '5',
+                             '?action=listcategories&category=genre'
+                             '&genre=aussie-drama',
+                             'resume:false'])
+    @responses.activate
+    def test_make_series_list_cached(self, mock_listitem, mock_version):
+        responses.add('GET', config.TVSERIES_URL, body=self.TV_SERIES_JSON)
+        responses.add('GET',
+                      re.compile(
+                          'https://tv-api.9now.com.au/v2/pages/genres/'),
+                      body=self.SERIES_QUERY_JSON)
+        mock_listitem.side_effect = fakes.FakeListItem
+        mock_version.return_value = 17
+        params = menu.utils.get_url(sys.argv[2][1:])
+        menu.make_series_list(params)
+        self.mock_plugin.directory = []
+        menu.make_series_list(params)
+        self.assertEqual(55, len(self.mock_plugin.directory))
+        self.assertEqual('Bad Mothers', self.mock_plugin.directory[0].get(
+            'listitem').getLabel())

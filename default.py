@@ -16,6 +16,7 @@ def main():
     provided paramstring
     """
     params = dict(parse_qsl(sys.argv[2][1:]))
+    utils.log('called with params: {0}'.format(str(params)))
     if (len(params) == 0):
         menu.list_categories()
     else:

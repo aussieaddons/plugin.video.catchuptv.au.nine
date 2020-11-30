@@ -56,13 +56,12 @@ class BaseItem(object):
 
 class Genre(BaseItem):
     def __init__(self, **kwargs):
-        super(Genre, self).__init__(**kwargs)
         self.genre_slug = None
+        super(Genre, self).__init__(**kwargs)
 
 
 class Series(BaseItem):
     def __init__(self, **kwargs):
-        super(Series, self).__init__(**kwargs)
         self.multi_season = None
         self.series_name = None
         self.series_slug = None
@@ -71,6 +70,7 @@ class Series(BaseItem):
         self.genre = None
         self.genre_slug = None
         self.desc = None
+        super(Series, self).__init__(**kwargs)
 
     def get_title(self):
         if self.multi_season:
@@ -81,7 +81,6 @@ class Series(BaseItem):
 
 class Episode(BaseItem):
     def __init__(self, **kwargs):
-        super(Episode, self).__init__(**kwargs)
         self.series_slug = None
         self.series_title = None
         self.season_slug = None
@@ -96,6 +95,7 @@ class Episode(BaseItem):
         self.drm = None
         self.license_url = None
         self.license_key = None
+        super(Episode, self).__init__(**kwargs)
 
     def get_title(self):
         return 'Ep {0} - {1}'.format(self.episode_no, self.episode_name)
@@ -103,12 +103,12 @@ class Episode(BaseItem):
 
 class Channel(BaseItem):
     def __init__(self, **kwargs):
-        super(Channel, self).__init__(**kwargs)
         self.desc = None
         self.episode_name = None
         self.url = None
         self.id = None
         self.drm = None
+        super(Channel, self).__init__(**kwargs)
 
     def get_title(self):
         return '{0} - {1}'.format(self.title, self.desc)
