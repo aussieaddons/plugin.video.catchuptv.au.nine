@@ -30,6 +30,9 @@ def play_video(params):
         _handle = int(sys.argv[1])
         json_url = config.BRIGHTCOVE_DRM_URL.format(
             config.BRIGHTCOVE_ACCOUNT, params['id'])
+        play_item = xbmcgui.ListItem()
+        play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+        play_item.setProperty('inputstream', 'inputstream.adaptive')
 
         if params.get('drm') == 'True':
             if xbmcaddon.Addon().getSetting('ignore_drm') == 'false':
@@ -39,7 +42,7 @@ def play_video(params):
             url = widevine['url']
             sub_url = widevine['sub_url']
             play_item = xbmcgui.ListItem(path=url)
-            play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+            play_item.setPath(url)
             play_item.setProperty('inputstream.adaptive.manifest_type',
                                   'mpd')
             play_item.setProperty('inputstream.adaptive.license_type',
@@ -53,7 +56,9 @@ def play_video(params):
             stream_data = comm.get_stream(json_url, live=live)
             url = str(stream_data.get('url'))
             sub_url = stream_data.get('sub_url')
-            play_item = xbmcgui.ListItem(path=url)
+            play_item.setPath(url)
+            play_item.setProperty('inputstream.adaptive.manifest_type',
+                                  'hls')
             utils.log('Playing {0} - {1}'.format(params.get('title'), url))
 
         if sub_url:
