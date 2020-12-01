@@ -128,7 +128,7 @@ def list_episodes(params):
         e.episode_no = str(episode['episodeNumber'])
         e.thumb = episode['image']['sizes'].get('w480')
         e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
-        e.episode_name = episode.get('name').encode('utf8')
+        e.episode_name = utils.ensure_ascii(episode.get('name'))
         e.title = e.get_title()
         e.desc = utils.ensure_ascii(episode.get('description'))
         e.duration = episode['video'].get('duration')//1000
