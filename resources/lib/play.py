@@ -119,21 +119,21 @@ def play_video(params):
 
         upnext_info = dict(
             current_episode=dict(
-                episodeid=params['id'],
-                tvshowid=params['series_slug'],
-                title=params['episode_name'],
+                episodeid=params.get('id', ''),
+                tvshowid=params.get('series_slug', ''),
+                title=params.get('episode_name', ''),
                 art={
-                    'thumb': params['thumb'],
-                    'tvshow.fanart': params['fanart'],
+                    'thumb': params.get('thumb', ''),
+                    'tvshow.fanart': params.get('fanart', ''),
                 },
-                season=params['season_no'],
-                episode=params['episode_no'],
-                showtitle=params['series_title'],
-                plot=params['desc'],
+                season=params.get('season_no', ''),
+                episode=params.get('episode_no', ''),
+                showtitle=params.get('series_title', ''),
+                plot=params.get('desc', ''),
                 playcount=0,
                 rating=None,
-                firstaired=params['airdate'],
-                runtime=params['duration'],
+                firstaired=params.get('airdate', ''),
+                runtime=params.get('duration', ''),
             ),
             next_episode=dict(
                 episodeid=next_item.id,
