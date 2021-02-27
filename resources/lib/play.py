@@ -41,7 +41,6 @@ def play_video(params):
             widevine = comm.get_widevine_auth(json_url)
             url = widevine['url']
             sub_url = widevine['sub_url']
-            play_item = xbmcgui.ListItem(path=url)
             play_item.setPath(url)
             play_item.setProperty('inputstream.adaptive.manifest_type',
                                   'mpd')

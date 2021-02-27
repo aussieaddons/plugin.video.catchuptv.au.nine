@@ -70,9 +70,6 @@ def make_episodes_list(params):
             url = '{0}?action=listepisodes{1}'.format(_url, e.make_kodi_url())
             is_folder = False
             li.setProperty('IsPlayable', 'true')
-            if e.drm is True:
-                li.setProperty('inputstreamaddon', 'inputstream.adaptive')
-                li.setProperty('inputstream.adaptive.manifest_type', 'mpd')
             li.setInfo('video', {'plot': e.desc,
                                  'plotoutline': e.desc,
                                  'duration': e.duration,
