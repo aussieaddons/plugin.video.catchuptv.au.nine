@@ -15,6 +15,10 @@
     <reuselanguageinvoker>true</reuselanguageinvoker>
     <summary>9now add-on</summary>
     <description>Watch live TV and catch up on all videos offered by the 9now service</description>
+    <assets>
+      <icon>icon.png</icon>
+      <fanart>fanart.jpg</fanart>
+    </assets>
     <provides>video</provides>
     <platform>all</platform>
   </extension>
