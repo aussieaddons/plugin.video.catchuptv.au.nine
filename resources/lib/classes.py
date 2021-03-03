@@ -51,7 +51,7 @@ class BaseItem(object):
 
     def parse_kodi_url(self, url):
         params = dict(parse_qsl(url))
-        params.pop('addon_version')
+        params.pop('addon_version', '')
         for item in params.keys():
             setattr(self, item, unquote_plus(params[item]))
 
