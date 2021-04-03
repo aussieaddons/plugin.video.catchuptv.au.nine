@@ -130,7 +130,9 @@ def list_episodes(params):
         e.fanart = data['tvSeries']['image']['sizes'].get('w1280')
         e.episode_name = utils.ensure_ascii(episode.get('name'))
         e.title = e.get_title()
-        e.desc = utils.ensure_ascii(episode.get('description'))
+        desc = episode.get('description')
+        if desc:
+            e.desc = utils.ensure_ascii(desc)
         e.duration = episode['video'].get('duration')//1000
         airdate = episode.get('airDate')
         if airdate:
